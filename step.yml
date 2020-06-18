@@ -1,0 +1,76 @@
+title: |-
+  Export APK from AAB
+summary: |
+  Fancy summary
+description: |
+  Fancy description
+website: https://github.com/adborbas/bitrise-step-export-apk-from-aab
+source_code_url: https://github.com/adborbas/bitrise-step-export-apk-from-aab
+support_url: https://github.com/adborbas/bitrise-step-export-apk-from-aab/issues
+host_os_tags:
+  - osx-10.10
+  - ubuntu-16.04
+project_type_tags:
+  - android
+type_tags:
+  - test
+
+is_requires_admin_user: true
+is_always_run: false
+is_skippable: false
+run_if: ""
+
+toolkit:
+  go:
+    package_name: github.com/adborbas/bitrise-step-export-apk-from-aab
+
+
+inputs:
+  - aab_path:
+    opts:
+      title: "The path of the AAB."
+      summary: Summary. No more than 2-3 sentences.
+      description: |
+        Description of this input.
+
+        Can be Markdown formatted text.
+      is_expand: true
+      is_required: true
+  - keystore_path:
+    opts:
+      title: Path of the Keystore file.
+      is_expand: true
+  - keystore_password:
+      opts:
+      title: Keystore's password.
+      description: |
+        If you’re specifying a password in plain text, qualify it with `pass:`. 
+        If you’re passing the path to a file that contains the password, qualify it with `file:`.
+      is_expand: true
+  - key_alias:
+    opts:
+      title: Signing key's alias.
+      is_expand: true
+  - key_password:
+    opts:
+      title: Signing key's password.
+      description: |
+        If you’re specifying a password in plain text, qualify it with `pass:`. 
+        If you’re passing the path to a file that contains the password, qualify it with `file:`.
+      is_expand: true
+  - bundletool_version: "0.15.0"
+    opts:
+      title: Version of bundletool to use.
+      summary: |
+        Versions are available here: https://github.com/google/bundletool/releases
+      is_expand: true
+
+outputs:
+  - APK_PATH:
+    opts:
+      title: "Example Step Output"
+      summary: Summary. No more than 2-3 sentences.
+      description: |
+        Description of this output.
+
+        Can be Markdown formatted text.
