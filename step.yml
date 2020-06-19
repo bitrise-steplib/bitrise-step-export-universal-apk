@@ -4,9 +4,9 @@ summary: |
   Fancy summary
 description: |
   Fancy description
-website: https://github.com/adborbas/bitrise-step-export-apk-from-aab
-source_code_url: https://github.com/adborbas/bitrise-step-export-apk-from-aab
-support_url: https://github.com/adborbas/bitrise-step-export-apk-from-aab/issues
+website: https://github.com/bitrise-steplib/bitrise-step-generate-universal-apk
+source_code_url: https://github.com/bitrise-steplib/bitrise-step-generate-universal-apk
+support_url: https://github.com/bitrise-steplib/bitrise-step-generate-universal-apk/issues
 host_os_tags:
   - osx-10.10
   - ubuntu-16.04
@@ -22,7 +22,7 @@ run_if: ""
 
 toolkit:
   go:
-    package_name: github.com/adborbas/bitrise-step-export-apk-from-aab
+    package_name: github.com/bitrise-steplib/bitrise-step-generate-universal-apk
 
 
 inputs:

@@ -3,18 +3,20 @@ package apkexporter
 import (
 	"errors"
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/adborbas/bitrise-step-export-apk-from-aab/bundletool"
 	"github.com/bitrise-io/go-utils/command"
 	"github.com/bitrise-io/go-utils/errorutil"
 	"github.com/bitrise-io/go-utils/pathutil"
+	"github.com/bitrise-steplib/bitrise-step-generate-universal-apk/bundletool"
+	"github.com/bitrise-steplib/steps-deploy-to-bitrise-io/androidartifact"
 )
 
 // Bundletooler ...
 type Bundletooler interface {
-	BuildAPKs(aabPath, apksPath string, keystoreCfg *bundletool.KeystoreConfig) error
+	BuildAPKs(aabPath, apksPath string, keystoreCfg *bundletool.KeystoreConfig) *command.Model
 }
 
 // Exporter ...
@@ -57,34 +59,48 @@ func run(cmd *command.Model) error {
 
 // ExportUniversalAPK generates universal apks from an aab file.
 func (exporter Exporter) ExportUniversalAPK(aabPath, destDir string, keystoreConfig *bundletool.KeystoreConfig) (string, error) {
-	apksPath, err := exporter.exportAPKs(aabPath, keystoreConfig)
+	tempPath, err := pathutil.NormalizedOSTempDirPath("universal_apk")
 	if err != nil {
 		return "", err
 	}
 
-	universalAPKPath, err := exporter.unzipAPKs(apksPath)
+	apksPath, err := exporter.exportAPKs(aabPath, tempPath, keystoreConfig)
 	if err != nil {
 		return "", err
 	}
 
-	// renamedUniversalAPKPath := ""
-	// os.Rename(universalAPKPath, renamedUniversalAPKPath)
-	// err = command.CopyFile(renamedUniversalAPKPath, filepath.Join(destDir, apkFilename(apksPath)))
-	// if err != nil {
-	// 	return "", err
-	// }
+	universalAPKPath, err := exporter.unzipAPKs(apksPath, tempPath)
+	if err != nil {
+		return "", err
+	}
+
+	renamedUniversalAPKPath := filepath.Join(tempPath, universalAPKName(aabPath))
+	err = os.Rename(universalAPKPath, renamedUniversalAPKPath)
+	if err != nil {
+		return "", err
+	}
+
+	err = command.CopyFile(renamedUniversalAPKPath, filepath.Join(destDir, filepath.Base(renamedUniversalAPKPath)))
+	if err != nil {
+		return "", err
+	}
 
 	return universalAPKPath, nil
 }
 
-func (exporter Exporter) exportAPKs(aabPath string, keystoreConfig *bundletool.KeystoreConfig) (string, error) {
-	tmpDir, err := pathutil.NormalizedOSTempDirPath("exported_apks")
-	if err != nil {
-		return "", err
-	}
-	apksPath := filepath.Join(tmpDir, apksFilename(aabPath))
+func universalAPKName(aabPath string) string {
+	untrimmedAPKName := androidartifact.UniversalAPKBase(aabPath)
+	extension := filepath.Ext(untrimmedAPKName)
+	fileNameWithoutExtension := strings.TrimSuffix(untrimmedAPKName, extension)
+	trimmedFileName := strings.Trim(fileNameWithoutExtension, "-")
+	return trimmedFileName + extension
+}
 
-	err = exporter.bundletooler.BuildAPKs(aabPath, apksPath, keystoreConfig)
+func (exporter Exporter) exportAPKs(aabPath, tempPath string, keystoreConfig *bundletool.KeystoreConfig) (string, error) {
+	apksPath := filepath.Join(tempPath, apksFilename(aabPath))
+
+	buildAPKsCommand := exporter.bundletooler.BuildAPKs(aabPath, apksPath, keystoreConfig)
+	err := run(buildAPKsCommand)
 	if err != nil {
 		return "", err
 	}
@@ -92,13 +108,8 @@ func (exporter Exporter) exportAPKs(aabPath string, keystoreConfig *bundletool.K
 	return apksPath, nil
 }
 
-func (exporter Exporter) unzipAPKs(apksPth string) (string, error) {
-	destDir, err := pathutil.NormalizedOSTempDirPath("universal_apk")
-	if err != nil {
-		return "", err
-	}
-
-	universalAPKPath, err := unzipUniversalAPKsArchive(apksPth, destDir)
+func (exporter Exporter) unzipAPKs(apksPth, tempPath string) (string, error) {
+	universalAPKPath, err := unzipUniversalAPKsArchive(apksPth, tempPath)
 	if err != nil {
 		return "", err
 	}

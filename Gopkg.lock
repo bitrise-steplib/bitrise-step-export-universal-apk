@@ -3,18 +3,23 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:b7e766914d681831cccc29898889c98a68eca2067f7b77a14340eccfd6264238"
-  name = "github.com/adborbas/bitrise-step-export-apk-from-aab"
-  packages = [
-    "apkexporter",
-    "bundletool",
-  ]
+  digest = "1:34c5b8720a28e2c9bf3446a9837ccfcdd941f08dd13559d69ef21628c81c0986"
+  name = "github.com/avast/apkparser"
+  packages = ["."]
   pruneopts = "UT"
-  revision = "a0e123a224468beb682f1dca4e3b8b5d0a5e4fd0"
+  revision = "64ac289075cff9515f68dad1fd66fc042cbf80d2"
 
 [[projects]]
   branch = "master"
-  digest = "1:0c8282cb84562f0119ecabf1841a5a63c4ee815178bc2f1ae678e49b27551a25"
+  digest = "1:c050cdb51aa46952748e92cd29c78593c711a2ee4e84bf4e09dfbc7def71304d"
+  name = "github.com/bitrise-io/go-android"
+  packages = ["sdk"]
+  pruneopts = "UT"
+  revision = "a765b1761418206bd0bda269bee472efc1a77c4d"
+
+[[projects]]
+  branch = "master"
+  digest = "1:f6514eccbc51d3e6820ce98170e830d7e15f49d249dd43843141733361258618"
   name = "github.com/bitrise-io/go-utils"
   packages = [
     "colorstring",
@@ -24,9 +29,26 @@
     "parseutil",
     "pathutil",
     "pointers",
+    "sliceutil",
   ]
   pruneopts = "UT"
   revision = "e212188d99b41373b4ff8b69e7b1f677bc427bde"
+
+[[projects]]
+  digest = "1:0fbd9dfdb1513001ccc5d8abaa2e3ae2e2ea871181716904e26c04da2158f93f"
+  name = "github.com/bitrise-steplib/steps-deploy-to-bitrise-io"
+  packages = ["androidartifact"]
+  pruneopts = "UT"
+  revision = "61a72c5d9ed8df752581e6a486b39364056de9c9"
+  version = "1.10.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:26e714e21bef4fc07640fb796ccce6d4f9423e15b2d660e131a8e61a0ee576d5"
+  name = "github.com/bitrise-steplib/steps-xcode-test"
+  packages = ["pretty"]
+  pruneopts = "UT"
+  revision = "c5bca453fef5ea652139eb3ea0e41f594fc2a51d"
 
 [[projects]]
   branch = "master"
@@ -43,6 +65,14 @@
   pruneopts = "UT"
   revision = "8991bc29aa16c548c550c7ff78260e27b9ab7c73"
   version = "v1.1.1"
+
+[[projects]]
+  digest = "1:95732e0c27df672b3fdf5cdd8edd18cba5fc07263ef7cd25eaaad4afc4730313"
+  name = "github.com/hashicorp/go-version"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "59da58cfd357de719a4d16dac30481391a56c002"
+  version = "v1.2.1"
 
 [[projects]]
   digest = "1:0028cb19b2e4c3112225cd871870f2d9cf49b9b4276531f03438a88e94be86fe"
@@ -75,12 +105,11 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
-    "github.com/adborbas/bitrise-step-export-apk-from-aab/apkexporter",
-    "github.com/adborbas/bitrise-step-export-apk-from-aab/bundletool",
     "github.com/bitrise-io/go-utils/command",
     "github.com/bitrise-io/go-utils/errorutil",
     "github.com/bitrise-io/go-utils/log",
     "github.com/bitrise-io/go-utils/pathutil",
+    "github.com/bitrise-steplib/steps-deploy-to-bitrise-io/androidartifact",
     "github.com/bitrise-tools/go-steputils/stepconf",
     "github.com/stretchr/testify/assert",
     "github.com/stretchr/testify/require",

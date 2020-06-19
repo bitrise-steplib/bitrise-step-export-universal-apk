@@ -5,10 +5,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/adborbas/bitrise-step-export-apk-from-aab/apkexporter"
-	"github.com/adborbas/bitrise-step-export-apk-from-aab/bundletool"
 	"github.com/bitrise-io/go-utils/command"
 	"github.com/bitrise-io/go-utils/log"
+	"github.com/bitrise-steplib/bitrise-step-generate-universal-apk/apkexporter"
+	"github.com/bitrise-steplib/bitrise-step-generate-universal-apk/bundletool"
 	"github.com/bitrise-tools/go-steputils/stepconf"
 )
 
@@ -36,7 +36,7 @@ func main() {
 	}
 
 	exportEnvironmentWithEnvman("APK_PATH", apkPath)
-	log.Infof("Success apk exported to: %v", apkPath)
+	log.Infof("Success APK exported to: %s", apkPath)
 	os.Exit(0)
 }
 

@@ -5,7 +5,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"path"
 	"path/filepath"
 
 	"github.com/bitrise-io/go-utils/command"
@@ -45,8 +44,8 @@ func New(version string) (*Tool, error) {
 	}
 
 	resp, err := getFromMultipleSources([]string{
-		path.Join(githubReleaseBaseURL, version, "bundletool-all-"+version+".jar"),
-		path.Join(githubReleaseBaseURL, version, bundletoolAllJarName),
+		githubReleaseBaseURL + "/" + version + "/" + "bundletool-all-" + version + ".jar",
+		githubReleaseBaseURL + "/" + version + "/" + bundletoolAllJarName,
 	})
 	if err != nil {
 		return nil, err
