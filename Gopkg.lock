@@ -83,10 +83,19 @@
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:729f65378817684798e53068862397c12daffa0757abbe073f6620a560fc6fb5"
+  digest = "1:23472f69a3ee7225de2f104aa48c6456959d1c155e45035c9845806d83109190"
+  name = "github.com/stretchr/objx"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "ea4fe68685ee0d3cee7032121851b57e7494e8ea"
+  version = "v0.2.0"
+
+[[projects]]
+  digest = "1:fc44ab3ee6f79e2b4c67ea294f500aa151f7b882a706eb7f3e881aba1de3a729"
   name = "github.com/stretchr/testify"
   packages = [
     "assert",
+    "mock",
     "require",
   ]
   pruneopts = "UT"
@@ -112,6 +121,7 @@
     "github.com/bitrise-steplib/steps-deploy-to-bitrise-io/androidartifact",
     "github.com/bitrise-tools/go-steputils/stepconf",
     "github.com/stretchr/testify/assert",
+    "github.com/stretchr/testify/mock",
     "github.com/stretchr/testify/require",
   ]
   solver-name = "gps-cdcl"

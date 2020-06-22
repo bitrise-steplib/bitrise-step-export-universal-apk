@@ -36,7 +36,7 @@ func main() {
 	}
 
 	exportEnvironmentWithEnvman("APK_PATH", apkPath)
-	log.Infof("Success APK exported to: %s", apkPath)
+	log.Donef("Success APK exported to: %s", apkPath)
 	os.Exit(0)
 }
 

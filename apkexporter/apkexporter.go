@@ -69,7 +69,7 @@ func (exporter Exporter) ExportUniversalAPK(aabPath, destDir string, keystoreCon
 		return "", err
 	}
 
-	universalAPKPath, err := exporter.unzipAPKs(apksPath, tempPath)
+	universalAPKPath, err := unzipUniversalAPKsArchive(apksPath, tempPath)
 	if err != nil {
 		return "", err
 	}
@@ -106,15 +106,6 @@ func (exporter Exporter) exportAPKs(aabPath, tempPath string, keystoreConfig *bu
 	}
 
 	return apksPath, nil
-}
-
-func (exporter Exporter) unzipAPKs(apksPth, tempPath string) (string, error) {
-	universalAPKPath, err := unzipUniversalAPKsArchive(apksPth, tempPath)
-	if err != nil {
-		return "", err
-	}
-
-	return universalAPKPath, nil
 }
 
 func apksFilename(aabPath string) string {
