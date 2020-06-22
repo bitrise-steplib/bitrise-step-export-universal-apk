@@ -1,4 +1,3 @@
 .bitrise*
 .gows.user.yml
 *.test
-vendor/
