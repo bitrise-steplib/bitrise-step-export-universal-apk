@@ -11,8 +11,8 @@ import (
 
 func Test_exportAPKs_Successful(t *testing.T) {
 	// Given
-	mockBundletooler := givenMockedBundletooler(givenSuccessfulCommand())
-	exporter := givenExporter(mockBundletooler)
+	mockAPKBuilder := givenMockedAPKBuilder(givenSuccessfulCommand())
+	exporter := givenExporter(mockAPKBuilder)
 	aabPath := "/path/to/app.aab"
 	tempPath := "/temp/path"
 	expectedAPKsPath := "/temp/path/app.apks"
@@ -21,21 +21,21 @@ func Test_exportAPKs_Successful(t *testing.T) {
 	output, err := exporter.exportAPKs(aabPath, tempPath, nil)
 
 	// Then
+	require.NoError(t, err)
 	require.Equal(t, expectedAPKsPath, output)
-	require.Nil(t, err)
 }
 
 func Test_exportAPKs_Failling(t *testing.T) {
 	// Given
-	mockBundletooler := givenMockedBundletooler(givenFailingCommand())
-	exporter := givenExporter(mockBundletooler)
+	mockAPKBuilder := givenMockedAPKBuilder(givenFailingCommand())
+	exporter := givenExporter(mockAPKBuilder)
 
 	// When
 	output, err := exporter.exportAPKs("", "", nil)
 
 	// Then
+	require.Error(t, err)
 	require.Empty(t, output)
-	require.NotNil(t, err)
 }
 
 func Test_apksFilename(t *testing.T) {
@@ -74,21 +74,21 @@ func Test_filenameWithExtension(t *testing.T) {
 	require.Equal(t, expectedFilename, actualFilename)
 }
 
-func givenExporter(bundletooler Bundletooler) Exporter {
-	return Exporter{bundletooler}
+func givenExporter(apkbuilder APKBuilder) Exporter {
+	return Exporter{apkbuilder}
 }
 
-type MockBundletooler struct {
+type MockAPKBuilder struct {
 	mock.Mock
 }
 
-func (m *MockBundletooler) BuildAPKs(aabPath, apksPath string, keystoreCfg *bundletool.KeystoreConfig) *command.Model {
+func (m *MockAPKBuilder) BuildAPKs(aabPath, apksPath string, keystoreCfg *bundletool.KeystoreConfig) *command.Model {
 	args := m.Called(aabPath, apksPath, keystoreCfg)
 	return args.Get(0).(*command.Model)
 }
 
-func givenMockedBundletooler(cmd *command.Model) *MockBundletooler {
-	mockBundletooler := new(MockBundletooler)
+func givenMockedAPKBuilder(cmd *command.Model) *MockAPKBuilder {
+	mockBundletooler := new(MockAPKBuilder)
 	mockBundletooler.On("BuildAPKs", mock.Anything, mock.Anything, mock.Anything).Return(cmd)
 	return mockBundletooler
 }

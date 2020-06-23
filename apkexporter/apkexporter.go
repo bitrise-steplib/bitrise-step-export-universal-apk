@@ -11,28 +11,35 @@ import (
 	"github.com/bitrise-io/go-utils/errorutil"
 	"github.com/bitrise-io/go-utils/pathutil"
 	"github.com/bitrise-steplib/bitrise-step-generate-universal-apk/bundletool"
-	"github.com/bitrise-steplib/steps-deploy-to-bitrise-io/androidartifact"
 )
 
-// Bundletooler ...
-type Bundletooler interface {
+// APKBuilder ...
+type APKBuilder interface {
 	BuildAPKs(aabPath, apksPath string, keystoreCfg *bundletool.KeystoreConfig) *command.Model
 }
 
 // Exporter ...
 type Exporter struct {
-	bundletooler Bundletooler
+	bundletooler APKBuilder
 }
 
 // New ...
-func New(bundletooler Bundletooler) Exporter {
+func New(bundletooler APKBuilder) Exporter {
 	return Exporter{bundletooler: bundletooler}
 }
 
-// unzipUniversalAPKsArchive unzips an universal apks archive.
-func unzipUniversalAPKsArchive(archive, destDir string) (string, error) {
-	unzipCommand := command.New("unzip", archive, "-d", destDir)
-	return filepath.Join(destDir, "universal.apk"), run(unzipCommand)
+// unzipAPKsArchive unzips an universal apks archive.
+func unzipAPKsArchive(archive, destDir string) (string, error) {
+	if err := run(command.New("unzip", archive, "-d", destDir)); err != nil {
+		return "", err
+	}
+
+	output := filepath.Join(destDir, "universal.apk")
+	_, err := os.Stat(output)
+	if os.IsNotExist(err) {
+		return "", os.ErrNotExist
+	}
+	return output, nil
 }
 
 // handleError creates error with layout: `<cmd> failed (status: <status_code>): <cmd output>`.
@@ -69,27 +76,27 @@ func (exporter Exporter) ExportUniversalAPK(aabPath, destDir string, keystoreCon
 		return "", err
 	}
 
-	universalAPKPath, err := unzipUniversalAPKsArchive(apksPath, tempPath)
+	universalAPKPath, err := unzipAPKsArchive(apksPath, tempPath)
 	if err != nil {
 		return "", err
 	}
 
-	renamedUniversalAPKPath := filepath.Join(tempPath, universalAPKName(aabPath))
-	err = os.Rename(universalAPKPath, renamedUniversalAPKPath)
-	if err != nil {
+	universalAPKName := universalAPKName(aabPath)
+	renamedUniversalAPKPath := filepath.Join(tempPath, universalAPKName)
+	if err = os.Rename(universalAPKPath, renamedUniversalAPKPath); err != nil {
 		return "", err
 	}
 
-	err = command.CopyFile(renamedUniversalAPKPath, filepath.Join(destDir, filepath.Base(renamedUniversalAPKPath)))
-	if err != nil {
+	if err = command.CopyFile(renamedUniversalAPKPath, filepath.Join(destDir, universalAPKName)); err != nil {
 		return "", err
 	}
 
 	return universalAPKPath, nil
 }
 
+// universalAPKName returns the aab's universal apk pair's base name.
 func universalAPKName(aabPath string) string {
-	untrimmedAPKName := androidartifact.UniversalAPKBase(aabPath)
+	untrimmedAPKName := UniversalAPKBase(aabPath)
 	extension := filepath.Ext(untrimmedAPKName)
 	fileNameWithoutExtension := strings.TrimSuffix(untrimmedAPKName, extension)
 	trimmedFileName := strings.Trim(fileNameWithoutExtension, "-")

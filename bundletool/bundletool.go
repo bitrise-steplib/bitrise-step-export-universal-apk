@@ -10,6 +10,7 @@ import (
 	"github.com/bitrise-io/go-utils/command"
 	"github.com/bitrise-io/go-utils/log"
 	"github.com/bitrise-io/go-utils/pathutil"
+	"github.com/bitrise-io/go-utils/urlutil"
 )
 
 // KeystoreConfig represents the parameters required to sign an APK.
@@ -43,10 +44,12 @@ func New(version string) (*Tool, error) {
 		return nil, err
 	}
 
-	resp, err := getFromMultipleSources([]string{
-		githubReleaseBaseURL + "/" + version + "/" + "bundletool-all-" + version + ".jar",
-		githubReleaseBaseURL + "/" + version + "/" + bundletoolAllJarName,
-	})
+	urls, err := urls(version)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := getFromMultipleSources(urls)
 	if err != nil {
 		return nil, err
 	}
@@ -98,6 +101,21 @@ func (tool Tool) BuildAPKs(aabPath, apksPath string, keystoreCfg *KeystoreConfig
 	}
 
 	return tool.BuildCommand("build-apks", args...)
+}
+
+func urls(version string) ([]string, error) {
+	urls := []string{}
+	url, err := urlutil.Join(githubReleaseBaseURL, version, "bundletool-all-"+version+".jar")
+	if err != nil {
+		return nil, err
+	}
+	urls = append(urls, url)
+	url, err = urlutil.Join(githubReleaseBaseURL, version, bundletoolAllJarName)
+	if err != nil {
+		return nil, err
+	}
+	urls = append(urls, url)
+	return urls, nil
 }
 
 func getFromMultipleSources(sources []string) (*http.Response, error) {
