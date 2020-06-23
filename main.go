@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 	"strings"
 
@@ -9,6 +10,7 @@ import (
 	"github.com/bitrise-io/go-utils/log"
 	"github.com/bitrise-steplib/bitrise-step-generate-universal-apk/apkexporter"
 	"github.com/bitrise-steplib/bitrise-step-generate-universal-apk/bundletool"
+	"github.com/bitrise-steplib/bitrise-step-generate-universal-apk/filedownloader"
 	"github.com/bitrise-tools/go-steputils/stepconf"
 )
 
@@ -21,7 +23,8 @@ func main() {
 	stepconf.Print(config)
 	fmt.Println()
 
-	bundletoolTool, err := bundletool.New("0.15.0")
+	downloader := filedownloader.New(http.DefaultClient)
+	bundletoolTool, err := bundletool.New("0.15.0", downloader)
 	if err != nil {
 		log.Errorf("Failed to initialize bundletool: %s \n", err)
 		os.Exit(1)

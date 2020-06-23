@@ -2,9 +2,7 @@ package bundletool
 
 import (
 	"fmt"
-	"io"
 	"net/http"
-	"os"
 	"path/filepath"
 
 	"github.com/bitrise-io/go-utils/command"
@@ -37,43 +35,27 @@ type Tool struct {
 	path string
 }
 
+// FileDownloader ..
+type FileDownloader interface {
+	GetWithFallback(destination, source string, fallbackSources ...string) error
+}
+
 // New downloads the bundletool executable from Github and places it to a temporary path.
-func New(version string) (*Tool, error) {
+func New(version string, downloader FileDownloader) (*Tool, error) {
 	tmpPth, err := pathutil.NormalizedOSTempDirPath("tool")
 	if err != nil {
 		return nil, err
 	}
 
-	urls, err := urls(version)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := getFromMultipleSources(urls)
-	if err != nil {
-		return nil, err
-	}
-
-	defer func() {
-		if err := resp.Body.Close(); err != nil {
-			fmt.Println("Failed to close body, error:", err)
-		}
-	}()
-
 	toolPath := filepath.Join(tmpPth, bundletoolAllJarName)
 
-	f, err := os.Create(toolPath)
+	sources, err := sources(version)
 	if err != nil {
 		return nil, err
 	}
 
-	defer func() {
-		if err := f.Close(); err != nil {
-			fmt.Println("Failed to close file, error:", err)
-		}
-	}()
+	downloader.GetWithFallback(toolPath, sources[0], sources[1:]...)
 
-	_, err = io.Copy(f, resp.Body)
 	log.Infof("bundletool path created at: %s", toolPath)
 	return &Tool{toolPath}, err
 }
@@ -103,7 +85,7 @@ func (tool Tool) BuildAPKs(aabPath, apksPath string, keystoreCfg *KeystoreConfig
 	return tool.BuildCommand("build-apks", args...)
 }
 
-func urls(version string) ([]string, error) {
+func sources(version string) ([]string, error) {
 	urls := []string{}
 	url, err := urlutil.Join(githubReleaseBaseURL, version, "bundletool-all-"+version+".jar")
 	if err != nil {
