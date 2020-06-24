@@ -4,7 +4,6 @@ import (
 	"path/filepath"
 
 	"github.com/bitrise-io/go-utils/command"
-	"github.com/bitrise-io/go-utils/log"
 	"github.com/bitrise-io/go-utils/pathutil"
 	"github.com/bitrise-io/go-utils/urlutil"
 )
@@ -33,7 +32,12 @@ type Tool struct {
 	path string
 }
 
-// FileDownloader ..
+// Path return the file path where bundletool is located.
+func (tool Tool) Path() string {
+	return tool.path
+}
+
+// FileDownloader is a type that can download a file with fallback URLs
 type FileDownloader interface {
 	GetWithFallback(destination, source string, fallbackSources ...string) error
 }
@@ -56,7 +60,6 @@ func New(version string, downloader FileDownloader) (*Tool, error) {
 		return nil, err
 	}
 
-	log.Infof("bundletool path created at: %s", toolPath)
 	return &Tool{toolPath}, err
 }
 
@@ -67,8 +70,8 @@ func (tool Tool) BuildCommand(cmd string, args ...string) *command.Model {
 }
 
 // BuildAPKs generates an universal .apks file from the provided .aab file.
-// KeystoreConfig is optinal to provide. If provided that the returned .apks will be signed with it.
-// If not provided
+// KeystoreConfig is optinal to provide. If provided than the returned .apks will be signed with it.
+// If not provided then bundletool will try to use the debug.keystore.
 func (tool Tool) BuildAPKs(aabPath, apksPath string, keystoreCfg *KeystoreConfig) *command.Model {
 	args := []string{}
 	args = append(args, "--mode=universal")

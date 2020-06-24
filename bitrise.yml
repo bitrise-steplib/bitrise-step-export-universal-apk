@@ -35,10 +35,10 @@ workflows:
         run_if: true
         inputs:
           - aab_path: "/Users/adam.borbas/work/export-apk-from-aab/app.aab"
-          - keystore_path: "/Users/adam.borbas/work/export-apk-from-aab/debug.keystore"
+          - keystore_url: "file://Users/adam.borbas/work/export-apk-from-aab/debug.keystore"
           - keystore_password: "pass:android"
           - key_alias: "androidkey"
-          - key_password: "pass:android"
+          - private_key_password: "pass:android"
     - script:
         inputs:
         - content: |

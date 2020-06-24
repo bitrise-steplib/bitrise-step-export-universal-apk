@@ -4,11 +4,13 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 
 	"github.com/bitrise-io/go-utils/command"
 	"github.com/bitrise-io/go-utils/errorutil"
+	"github.com/bitrise-io/go-utils/log"
 	"github.com/bitrise-io/go-utils/pathutil"
 	"github.com/bitrise-steplib/bitrise-step-generate-universal-apk/bundletool"
 )
@@ -18,14 +20,23 @@ type APKBuilder interface {
 	BuildAPKs(aabPath, apksPath string, keystoreCfg *bundletool.KeystoreConfig) *command.Model
 }
 
+// FileDownloader ...
+type FileDownloader interface {
+	Get(destination, source string) error
+}
+
 // Exporter ...
 type Exporter struct {
-	bundletooler APKBuilder
+	bundletooler   APKBuilder
+	filedownloader FileDownloader
 }
 
 // New ...
-func New(bundletooler APKBuilder) Exporter {
-	return Exporter{bundletooler: bundletooler}
+func New(bundletooler APKBuilder, filedownloader FileDownloader) Exporter {
+	return Exporter{
+		bundletooler:   bundletooler,
+		filedownloader: filedownloader,
+	}
 }
 
 // unzipAPKsArchive unzips an universal apks archive.
@@ -71,6 +82,11 @@ func (exporter Exporter) ExportUniversalAPK(aabPath, destDir string, keystoreCon
 		return "", err
 	}
 
+	keystoreConfig, err = exporter.prepareKeystoreConfig(keystoreConfig)
+	if err != nil {
+		return "", err
+	}
+
 	apksPath, err := exporter.exportAPKs(aabPath, tempPath, keystoreConfig)
 	if err != nil {
 		return "", err
@@ -92,6 +108,40 @@ func (exporter Exporter) ExportUniversalAPK(aabPath, destDir string, keystoreCon
 	}
 
 	return universalAPKPath, nil
+}
+
+// Downloads the keystore from the url provided if needed.
+func (exporter Exporter) prepareKeystoreConfig(keystoreConfig *bundletool.KeystoreConfig) (*bundletool.KeystoreConfig, error) {
+	if keystoreConfig == nil {
+		// No KeystoreConfig passed, nothing to prepare
+		return nil, nil
+	}
+
+	log.Infof("Downloading keystore from: %s", keystoreConfig.Path)
+	tmpDir, err := pathutil.NormalizedOSTempDirPath("keystore")
+	if err != nil {
+		return nil, err
+	}
+
+	keystorePath := ""
+	if strings.HasPrefix(keystoreConfig.Path, "file://") {
+		pth := strings.TrimPrefix(keystoreConfig.Path, "file://")
+		keystorePath, err = pathutil.AbsPath(pth)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		log.Infof("Download keystore from: %s", keystoreConfig.Path)
+		keystorePath = path.Join(tmpDir, filepath.Base(keystoreConfig.Path))
+		if err := exporter.filedownloader.Get(keystorePath, keystoreConfig.Path); err != nil {
+			return nil, err
+		}
+	}
+	log.Infof("Using keystore at: %s", keystorePath)
+
+	newConfig := keystoreConfig
+	newConfig.Path = keystorePath
+	return newConfig, nil
 }
 
 // universalAPKName returns the aab's universal apk pair's base name.

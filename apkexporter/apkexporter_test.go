@@ -1,6 +1,7 @@
 package apkexporter
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/bitrise-io/go-utils/command"
@@ -12,7 +13,8 @@ import (
 func Test_exportAPKs_Successful(t *testing.T) {
 	// Given
 	mockAPKBuilder := givenMockedAPKBuilder(givenSuccessfulCommand())
-	exporter := givenExporter(mockAPKBuilder)
+	mockFileDownloader := givenMockFileDownloader()
+	exporter := givenExporter(mockAPKBuilder, mockFileDownloader)
 	aabPath := "/path/to/app.aab"
 	tempPath := "/temp/path"
 	expectedAPKsPath := "/temp/path/app.apks"
@@ -25,10 +27,11 @@ func Test_exportAPKs_Successful(t *testing.T) {
 	require.Equal(t, expectedAPKsPath, output)
 }
 
-func Test_exportAPKs_Failling(t *testing.T) {
+func Test_exportAPKs_FaillingCommand(t *testing.T) {
 	// Given
 	mockAPKBuilder := givenMockedAPKBuilder(givenFailingCommand())
-	exporter := givenExporter(mockAPKBuilder)
+	mockFileDownloader := givenMockFileDownloader()
+	exporter := givenExporter(mockAPKBuilder, mockFileDownloader)
 
 	// When
 	output, err := exporter.exportAPKs("", "", nil)
@@ -36,6 +39,50 @@ func Test_exportAPKs_Failling(t *testing.T) {
 	// Then
 	require.Error(t, err)
 	require.Empty(t, output)
+}
+
+func Test_prepareKeystoreConfig_File(t *testing.T) {
+	// Given
+	mockAPKBuilder := givenMockedAPKBuilder(givenSuccessfulCommand())
+	mockFileDownloader := givenMockFileDownloader()
+	exporter := givenExporter(mockAPKBuilder, mockFileDownloader)
+
+	// When
+	output, err := exporter.prepareKeystoreConfig(givenKeystoreConfig("file://keystore.keystore"))
+
+	// Then
+	require.NoError(t, err)
+	require.Contains(t, output.Path, "keystore.keystore")
+	require.NotContains(t, output.Path, "file://")
+}
+
+func Test_prepareKeystoreConfig_SuccessDownload(t *testing.T) {
+	// Given
+	mockAPKBuilder := givenMockedAPKBuilder(givenSuccessfulCommand())
+	mockFileDownloader := givenMockFileDownloader()
+	exporter := givenExporter(mockAPKBuilder, mockFileDownloader)
+
+	// When
+	output, err := exporter.prepareKeystoreConfig(givenKeystoreConfig("http://url.com/keystore.keystore"))
+
+	// Then
+	require.NoError(t, err)
+	require.Contains(t, output.Path, "keystore.keystore")
+}
+
+func Test_prepareKeystoreConfig_FaillingDownload(t *testing.T) {
+	// Given
+	mockAPKBuilder := givenMockedAPKBuilder(givenSuccessfulCommand())
+	expectedError := errors.New("failed")
+	mockFileDownloader := givenMockFailingFileDownloader(expectedError)
+	exporter := givenExporter(mockAPKBuilder, mockFileDownloader)
+
+	// When
+	output, acutalError := exporter.prepareKeystoreConfig(givenKeystoreConfig("http://url.com"))
+
+	// Then
+	require.Equal(t, expectedError, acutalError)
+	require.Nil(t, output)
 }
 
 func Test_apksFilename(t *testing.T) {
@@ -74,8 +121,29 @@ func Test_filenameWithExtension(t *testing.T) {
 	require.Equal(t, expectedFilename, actualFilename)
 }
 
-func givenExporter(apkbuilder APKBuilder) Exporter {
-	return Exporter{apkbuilder}
+type MockFileDownloader struct {
+	mock.Mock
+}
+
+func (m *MockFileDownloader) Get(destination, source string) error {
+	args := m.Called(destination, source)
+	return args.Error(0)
+}
+
+func givenMockFileDownloader() *MockFileDownloader {
+	mockFileDownloader := new(MockFileDownloader)
+	mockFileDownloader.On("Get", mock.Anything, mock.Anything).Return(nil)
+	return mockFileDownloader
+}
+
+func givenMockFailingFileDownloader(err error) *MockFileDownloader {
+	mockFileDownloader := new(MockFileDownloader)
+	mockFileDownloader.On("Get", mock.Anything, mock.Anything).Return(err)
+	return mockFileDownloader
+}
+
+func givenExporter(apkbuilder APKBuilder, filedownloader FileDownloader) Exporter {
+	return Exporter{apkbuilder, filedownloader}
 }
 
 type MockAPKBuilder struct {
@@ -99,4 +167,12 @@ func givenFailingCommand() *command.Model {
 
 func givenSuccessfulCommand() *command.Model {
 	return command.New("echo", "success")
+}
+
+func givenKeystoreConfig(path string) *bundletool.KeystoreConfig {
+	return &bundletool.KeystoreConfig{
+		Path:               path,
+		KeystorePassword:   "password",
+		SigningKeyAlias:    "alias",
+		SigningKeyPassword: "password"}
 }

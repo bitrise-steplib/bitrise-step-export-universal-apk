@@ -28,7 +28,7 @@ func Test_BuildAPKs_withoutKeystoreConfig(t *testing.T) {
 	tool := givenTool()
 	aabPath := "/path/to/app.aab"
 	apksPath := "/path/to/app.apks"
-	expectedCommand := buildAPKsCommand(tool, aabPath, apksPath, nil)
+	expectedCommand := []string{"java", "-jar", tool.path, "build-apks", "--mode=universal", "--bundle", aabPath, "--output", apksPath}
 
 	// When
 	actualCommand := tool.BuildAPKs(aabPath, apksPath, nil).GetCmd().Args
@@ -43,7 +43,9 @@ func Test_BuildAPKs_withKeystoreConfig(t *testing.T) {
 	aabPath := "/path/to/app.aab"
 	apksPath := "/path/to/app.apks"
 	keystoreConfig := givenKeystoreConfig()
-	expectedCommand := buildAPKsCommand(tool, aabPath, apksPath, &keystoreConfig)
+	expectedCommand := []string{"java", "-jar", tool.path, "build-apks", "--mode=universal", "--bundle", aabPath, "--output", apksPath,
+		"--ks", keystoreConfig.Path, "--ks-pass", keystoreConfig.KeystorePassword, "--ks-key-alias", keystoreConfig.SigningKeyAlias,
+		"--key-pass", keystoreConfig.SigningKeyPassword}
 
 	// When
 	actualCommand := tool.BuildAPKs(aabPath, apksPath, &keystoreConfig).GetCmd().Args
@@ -113,22 +115,6 @@ func givenKeystoreConfig() KeystoreConfig {
 		KeystorePassword:   "pass:keystorePassword",
 		SigningKeyAlias:    "signingkeyalias",
 		SigningKeyPassword: "file:/path/to/keystorepassfile"}
-}
-
-func buildAPKsCommand(tool Tool, aabPath, apksPath string, keystoreCfg *KeystoreConfig) []string {
-	command := append([]string{"java", "-jar", tool.path, "build-apks"})
-	command = append(command, "--mode=universal")
-	command = append(command, "--bundle", aabPath)
-	command = append(command, "--output", apksPath)
-
-	if keystoreCfg != nil {
-		command = append(command, "--ks", keystoreCfg.Path)
-		command = append(command, "--ks-pass", keystoreCfg.KeystorePassword)
-		command = append(command, "--ks-key-alias", keystoreCfg.SigningKeyAlias)
-		command = append(command, "--key-pass", keystoreCfg.SigningKeyPassword)
-	}
-
-	return command
 }
 
 func assertFileExists(t *testing.T, path string) {

@@ -24,7 +24,6 @@ toolkit:
   go:
     package_name: github.com/bitrise-steplib/bitrise-step-generate-universal-apk
 
-
 inputs:
   - aab_path:
     opts:
@@ -36,28 +35,36 @@ inputs:
         Can be Markdown formatted text.
       is_expand: true
       is_required: true
-  - keystore_path:
+  - keystore_url: $BITRISEIO_ANDROID_KEYSTORE_URL
     opts:
-      title: Path of the Keystore file.
-      is_expand: true
-  - keystore_password:
-      opts:
-      title: Keystore's password.
+      title: "Keystore url"
+      summary: ""
+      description: |-
+        TO BE FILLED
+      is_required: true
+      is_sensitive: true
+  - keystore_password: $BITRISEIO_ANDROID_KEYSTORE_PASSWORD
+    opts:
+      title: "Keystore password"
+      summary: ""
+      description: ""
+      is_required: true
+      is_sensitive: true
+  - keystore_alias: $BITRISEIO_ANDROID_KEYSTORE_ALIAS
+    opts:
+      title: "Keystore alias"
+      summary: ""
+      description: ""
+      is_required: true
+      is_sensitive: true
+  - private_key_password: $BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
+    opts:
+      title: "Private key password"
+      summary: ""
       description: |
-        If you’re specifying a password in plain text, qualify it with `pass:`. 
-        If you’re passing the path to a file that contains the password, qualify it with `file:`.
-      is_expand: true
-  - key_alias:
-    opts:
-      title: Signing key's alias.
-      is_expand: true
-  - key_password:
-    opts:
-      title: Signing key's password.
-      description: |
-        If you’re specifying a password in plain text, qualify it with `pass:`. 
-        If you’re passing the path to a file that contains the password, qualify it with `file:`.
-      is_expand: true
+        If key password equals to keystore password, you can leave it empty.
+        Otherwise specify the private key password.
+      is_sensitive: true
   - bundletool_version: "0.15.0"
     opts:
       title: Version of bundletool to use.

@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	KeystorePath     = "/path/to/keystore.keystore"
+	KeystoreURL      = "/path/to/keystore.keystore"
 	KeystotePassword = "pass:unbreakable"
 	KeyAlias         = "muchalias"
 	KeyPassword      = "pass:12345678"
@@ -24,7 +24,7 @@ func Test_parseKeystoreConfig(t *testing.T) {
 
 func Test_parseKeystoreConfig_missingRequiredParam(t *testing.T) {
 	config := givenConfig()
-	config.KeystorePath = ""
+	config.KeystoreURL = ""
 
 	parsedKeystoreConfig := parseKeystoreConfig(config)
 
@@ -35,7 +35,7 @@ func givenConfig() Config {
 	return Config{
 		DeployDir:        "/path/to/dir",
 		AABPath:          "/path/to/app.aab",
-		KeystorePath:     KeystorePath,
+		KeystoreURL:      KeystoreURL,
 		KeystotePassword: KeystotePassword,
 		KeyAlias:         KeyAlias,
 		KeyPassword:      KeyPassword,
@@ -44,7 +44,7 @@ func givenConfig() Config {
 
 func givenKeystoreConfig() *bundletool.KeystoreConfig {
 	return &bundletool.KeystoreConfig{
-		Path:               KeystorePath,
+		Path:               KeystoreURL,
 		KeystorePassword:   KeystotePassword,
 		SigningKeyAlias:    KeyAlias,
 		SigningKeyPassword: KeyPassword}

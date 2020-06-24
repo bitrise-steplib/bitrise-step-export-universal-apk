@@ -14,7 +14,7 @@ type HTTPClient interface {
 	Get(source string) (*http.Response, error)
 }
 
-// HTTPFileDownloader ..
+// HTTPFileDownloader ...
 type HTTPFileDownloader struct {
 	client HTTPClient
 }
@@ -24,11 +24,12 @@ func New(client HTTPClient) HTTPFileDownloader {
 	return HTTPFileDownloader{client}
 }
 
-// GetWithFallback ...
+// GetWithFallback downloads a file from a given source. Provided destination should be a file that does not exist.
+// You can specify fallback sources which will be used in order if downloading fails from either source.
 func (downloader HTTPFileDownloader) GetWithFallback(destination, source string, fallbackSources ...string) error {
 	sources := append([]string{source}, fallbackSources...)
 	for _, source := range sources {
-		err := downloader.get(destination, source)
+		err := downloader.Get(destination, source)
 		if err != nil {
 			log.Errorf("Could not download file from: %s", err)
 		} else {
@@ -39,7 +40,8 @@ func (downloader HTTPFileDownloader) GetWithFallback(destination, source string,
 	return fmt.Errorf("None of the sources returned 200 OK status")
 }
 
-func (downloader HTTPFileDownloader) get(destination, source string) error {
+// Get downloads a file from a given source. Provided destination should be a file that does not exist.
+func (downloader HTTPFileDownloader) Get(destination, source string) error {
 
 	resp, err := downloader.client.Get(source)
 	if err != nil {

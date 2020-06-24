@@ -26,7 +26,7 @@ func Test_get_Success(t *testing.T) {
 	downloader := givenFileDownloader(mockedHTTPClient)
 
 	// When
-	err := downloader.get(path, "http://url.com")
+	err := downloader.Get(path, "http://url.com")
 
 	// Then
 	require.NoError(t, err)
@@ -46,7 +46,7 @@ func Test_get_InvalidStatusCode(t *testing.T) {
 	downloader := givenFileDownloader(mockedHTTPClient)
 
 	// When
-	err := downloader.get(path, url)
+	err := downloader.Get(path, url)
 
 	// Then
 	require.Equal(t, expectedErr, err)
@@ -60,7 +60,7 @@ func Test_get_HTTPError(t *testing.T) {
 	downloader := givenFileDownloader(givenFailingHTTPClient(expectedErr))
 
 	// When
-	actualErr := downloader.get(path, "http://url.com")
+	actualErr := downloader.Get(path, "http://url.com")
 
 	// Then
 	require.Equal(t, expectedErr, actualErr)

@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"strings"
 
-	"github.com/bitrise-io/go-utils/command"
+	"github.com/bitrise-io/go-steputils/tools"
 	"github.com/bitrise-io/go-utils/log"
 	"github.com/bitrise-steplib/bitrise-step-generate-universal-apk/apkexporter"
 	"github.com/bitrise-steplib/bitrise-step-generate-universal-apk/bundletool"
@@ -14,37 +13,47 @@ import (
 	"github.com/bitrise-tools/go-steputils/stepconf"
 )
 
+// Config is defining the input arguments required by the Step.
+type Config struct {
+	DeployDir        string `env:"BITRISE_DEPLOY_DIR"`
+	AABPath          string `env:"aab_path,required"`
+	KeystoreURL      string `env:"keystore_url"`
+	KeystotePassword string `env:"keystore_password"`
+	KeyAlias         string `env:"key_alias"`
+	KeyPassword      string `env:"private_key_password"`
+}
+
 func main() {
 	var config Config
 	if err := stepconf.Parse(&config); err != nil {
-		log.Errorf("Error: %s \n", err)
-		os.Exit(1)
+		failf("Error: %s \n", err)
 	}
 	stepconf.Print(config)
 	fmt.Println()
 
-	downloader := filedownloader.New(http.DefaultClient)
-	bundletoolTool, err := bundletool.New("0.15.0", downloader)
+	bundletoolTool, err := bundletool.New("0.15.0", filedownloader.New(http.DefaultClient))
+	log.Infof("bundletool path created at: %s", bundletoolTool.Path())
 	if err != nil {
-		log.Errorf("Failed to initialize bundletool: %s \n", err)
-		os.Exit(1)
+		failf("Failed to initialize bundletool: %s \n", err)
 	}
 
-	exporter := apkexporter.New(bundletoolTool)
+	exporter := apkexporter.New(bundletoolTool, filedownloader.New(http.DefaultClient))
 	keystoreCfg := parseKeystoreConfig(config)
 	apkPath, err := exporter.ExportUniversalAPK(config.AABPath, config.DeployDir, keystoreCfg)
 	if err != nil {
-		log.Errorf("Failed to export apk, error: %s \n", err)
-		os.Exit(1)
+		failf("Failed to export apk, error: %s \n", err)
 	}
 
-	exportEnvironmentWithEnvman("APK_PATH", apkPath)
+	if err = tools.ExportEnvironmentWithEnvman("APK_PATH", apkPath); err != nil {
+		failf("Failed to export APK_PATH, error: %s \n", err)
+	}
+
 	log.Donef("Success APK exported to: %s", apkPath)
 	os.Exit(0)
 }
 
 func parseKeystoreConfig(config Config) *bundletool.KeystoreConfig {
-	if config.KeystorePath == "" ||
+	if config.KeystoreURL == "" ||
 		config.KeystotePassword == "" ||
 		config.KeyAlias == "" ||
 		config.KeyPassword == "" {
@@ -52,14 +61,13 @@ func parseKeystoreConfig(config Config) *bundletool.KeystoreConfig {
 	}
 
 	return &bundletool.KeystoreConfig{
-		Path:               config.KeystorePath,
+		Path:               config.KeystoreURL,
 		KeystorePassword:   config.KeystotePassword,
 		SigningKeyAlias:    config.KeyAlias,
 		SigningKeyPassword: config.KeyPassword}
 }
 
-func exportEnvironmentWithEnvman(keyStr, valueStr string) error {
-	cmd := command.New("envman", "add", "--key", keyStr)
-	cmd.SetStdin(strings.NewReader(valueStr))
-	return cmd.Run()
+func failf(s string, a ...interface{}) {
+	log.Errorf(s, a...)
+	os.Exit(1)
 }
