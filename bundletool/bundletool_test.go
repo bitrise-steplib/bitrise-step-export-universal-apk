@@ -1,8 +1,11 @@
 package bundletool
 
 import (
+	"errors"
+	"os"
 	"testing"
 
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
@@ -49,6 +52,58 @@ func Test_BuildAPKs_withKeystoreConfig(t *testing.T) {
 	require.Equal(t, expectedCommand, actualCommand)
 }
 
+func Test_sources(t *testing.T) {
+	// Given
+	version := "0.1.0"
+	expectedSources := []string{
+		"https://github.com/google/bundletool/releases/download/0.1.0/bundletool-all-0.1.0.jar",
+		"https://github.com/google/bundletool/releases/download/0.1.0/bundletool-all.jar",
+	}
+
+	// When
+	actualSources, err := sources(version)
+
+	//Then
+	require.NoError(t, err)
+	require.Equal(t, expectedSources, actualSources)
+}
+
+func Test_New_Success(t *testing.T) {
+	// Given
+	mockedFileDownloader := new(MockFileDownloader)
+	mockedFileDownloader.On("GetWithFallback", mock.Anything, mock.Anything, mock.Anything).Return(nil)
+
+	// When
+	tool, err := New("0.2.0", mockedFileDownloader)
+
+	// Then
+	require.NoError(t, err)
+	require.NotNil(t, tool)
+}
+
+func Test_New_Fail(t *testing.T) {
+	// Given
+	mockedFileDownloader := new(MockFileDownloader)
+	expectedError := errors.New("failed")
+	mockedFileDownloader.On("GetWithFallback", mock.Anything, mock.Anything, mock.Anything).Return(expectedError)
+
+	// When
+	tool, actualError := New("0.2.0", mockedFileDownloader)
+
+	// Then
+	require.Equal(t, expectedError, actualError)
+	require.Nil(t, tool)
+}
+
+type MockFileDownloader struct {
+	mock.Mock
+}
+
+func (m *MockFileDownloader) GetWithFallback(destination, source string, fallbackSources ...string) error {
+	args := m.Called(destination, source, fallbackSources)
+	return args.Error(0)
+}
+
 func givenTool() Tool {
 	return Tool{"/whatever/path"}
 }
@@ -74,4 +129,10 @@ func buildAPKsCommand(tool Tool, aabPath, apksPath string, keystoreCfg *Keystore
 	}
 
 	return command
+}
+
+func assertFileExists(t *testing.T, path string) {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		t.Fatalf("File should exist at: %s", path)
+	}
 }

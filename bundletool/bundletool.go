@@ -1,8 +1,6 @@
 package bundletool
 
 import (
-	"fmt"
-	"net/http"
 	"path/filepath"
 
 	"github.com/bitrise-io/go-utils/command"
@@ -54,7 +52,9 @@ func New(version string, downloader FileDownloader) (*Tool, error) {
 		return nil, err
 	}
 
-	downloader.GetWithFallback(toolPath, sources[0], sources[1:]...)
+	if err := downloader.GetWithFallback(toolPath, sources[0], sources[1:]...); err != nil {
+		return nil, err
+	}
 
 	log.Infof("bundletool path created at: %s", toolPath)
 	return &Tool{toolPath}, err
@@ -98,18 +98,4 @@ func sources(version string) ([]string, error) {
 	}
 	urls = append(urls, url)
 	return urls, nil
-}
-
-func getFromMultipleSources(sources []string) (*http.Response, error) {
-	for _, source := range sources {
-		resp, err := http.Get(source)
-		if err != nil {
-			return nil, err
-		}
-		if resp.StatusCode == http.StatusOK {
-			log.Infof("URL used to download bundletool: %s", source)
-			return resp, nil
-		}
-	}
-	return nil, fmt.Errorf("none of the sources returned 200 OK status")
 }
