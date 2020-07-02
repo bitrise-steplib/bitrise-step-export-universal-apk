@@ -1,9 +1,9 @@
 title: |-
-  Export APK from AAB
+  Generate Universal APK
 summary: |
   Fancy summary
 description: |
-  Fancy description
+  Generate Universal APK is step that can be used to create an universal APK from an AAB.
 website: https://github.com/bitrise-steplib/bitrise-step-generate-universal-apk
 source_code_url: https://github.com/bitrise-steplib/bitrise-step-generate-universal-apk
 support_url: https://github.com/bitrise-steplib/bitrise-step-generate-universal-apk/issues

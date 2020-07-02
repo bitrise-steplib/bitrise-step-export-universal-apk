@@ -49,7 +49,7 @@ func (downloader HTTPFileDownloader) Get(destination, source string) error {
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("Unable to download file from: %s. Status code: %d", source, resp.StatusCode)
+		return fmt.Errorf("unable to download file from: %s. Status code: %d", source, resp.StatusCode)
 	}
 
 	defer func() {
@@ -69,8 +69,7 @@ func (downloader HTTPFileDownloader) Get(destination, source string) error {
 		}
 	}()
 
-	_, err = io.Copy(f, resp.Body)
-	if err != nil {
+	if _, err = io.Copy(f, resp.Body); err != nil {
 		return err
 	}
 

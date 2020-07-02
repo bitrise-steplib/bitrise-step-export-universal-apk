@@ -284,6 +284,7 @@ func UniversalAPKBase(basedOnAAB string) string {
 	} else if info.SigningInfo.BitriseSigned {
 		name = name + bitriseSignedSuffix
 	}
+	name = strings.Trim(name, "-")
 	name += ".apk"
 	return name
 }

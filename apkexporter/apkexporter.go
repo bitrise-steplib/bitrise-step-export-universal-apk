@@ -15,26 +15,33 @@ import (
 	"github.com/bitrise-steplib/bitrise-step-generate-universal-apk/bundletool"
 )
 
-// APKBuilder ...
+const (
+	passPrefix    = "pass:"
+	fileSchema    = "file://"
+	apksExtension = ".apks"
+	apkExtension  = ".apk"
+)
+
+// APKBuilder represents a type that can run a commmand that generates an universal APK from AAB.
 type APKBuilder interface {
 	BuildAPKs(aabPath, apksPath string, keystoreCfg *bundletool.KeystoreConfig) *command.Model
 }
 
-// FileDownloader ...
+// FileDownloader represents a type that can download a file.
 type FileDownloader interface {
 	Get(destination, source string) error
 }
 
-// Exporter ...
+// Exporter can be used to export an universal APK from AAB.
 type Exporter struct {
-	bundletooler   APKBuilder
+	apkBuilder     APKBuilder
 	filedownloader FileDownloader
 }
 
-// New ...
-func New(bundletooler APKBuilder, filedownloader FileDownloader) Exporter {
+// New creates a new Exporter.
+func New(apkBuilder APKBuilder, filedownloader FileDownloader) Exporter {
 	return Exporter{
-		bundletooler:   bundletooler,
+		apkBuilder:     apkBuilder,
 		filedownloader: filedownloader,
 	}
 }
@@ -45,12 +52,11 @@ func unzipAPKsArchive(archive, destDir string) (string, error) {
 		return "", err
 	}
 
-	output := filepath.Join(destDir, "universal.apk")
-	_, err := os.Stat(output)
-	if os.IsNotExist(err) {
+	pth := filepath.Join(destDir, "universal.apk")
+	if _, err := os.Stat(pth); os.IsNotExist(err) {
 		return "", os.ErrNotExist
 	}
-	return output, nil
+	return pth, nil
 }
 
 // handleError creates error with layout: `<cmd> failed (status: <status_code>): <cmd output>`.
@@ -75,7 +81,7 @@ func run(cmd *command.Model) error {
 	return handleError(cmd.PrintableCommandArgs(), out, err)
 }
 
-// ExportUniversalAPK generates universal apks from an aab file.
+// ExportUniversalAPK generates a universal apk from an aab file.
 func (exporter Exporter) ExportUniversalAPK(aabPath, destDir string, keystoreConfig *bundletool.KeystoreConfig) (string, error) {
 	tempPath, err := pathutil.NormalizedOSTempDirPath("universal_apk")
 	if err != nil {
@@ -97,35 +103,42 @@ func (exporter Exporter) ExportUniversalAPK(aabPath, destDir string, keystoreCon
 		return "", err
 	}
 
-	universalAPKName := universalAPKName(aabPath)
-	renamedUniversalAPKPath := filepath.Join(tempPath, universalAPKName)
-	if err = os.Rename(universalAPKPath, renamedUniversalAPKPath); err != nil {
-		return "", err
-	}
-
-	if err = command.CopyFile(renamedUniversalAPKPath, filepath.Join(destDir, universalAPKName)); err != nil {
+	universalAPKName := UniversalAPKBase(aabPath)
+	if err := command.CopyFile(universalAPKPath, filepath.Join(destDir, universalAPKName)); err != nil {
 		return "", err
 	}
 
 	return universalAPKPath, nil
 }
 
-// Downloads the keystore from the url provided if needed.
+// Prepares the KeystoreConfig for use. For example: download the keystore file or prefix passwords.
 func (exporter Exporter) prepareKeystoreConfig(keystoreConfig *bundletool.KeystoreConfig) (*bundletool.KeystoreConfig, error) {
 	if keystoreConfig == nil {
 		// No KeystoreConfig passed, nothing to prepare
 		return nil, nil
 	}
 
-	log.Infof("Downloading keystore from: %s", keystoreConfig.Path)
+	keystoreConfig, err := exporter.prepareKeystorePath(keystoreConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	exporter.prepareKeystoreConfigPasswords(keystoreConfig)
+	return keystoreConfig, nil
+}
+
+// Prepares the keystore path for use. This could either mean:
+// - If a web url is provided, it downloads the keystore
+// - If a file url is provided, it trims the prefix of the path
+func (exporter Exporter) prepareKeystorePath(keystoreConfig *bundletool.KeystoreConfig) (*bundletool.KeystoreConfig, error) {
 	tmpDir, err := pathutil.NormalizedOSTempDirPath("keystore")
 	if err != nil {
 		return nil, err
 	}
 
 	keystorePath := ""
-	if strings.HasPrefix(keystoreConfig.Path, "file://") {
-		pth := strings.TrimPrefix(keystoreConfig.Path, "file://")
+	if strings.HasPrefix(keystoreConfig.Path, fileSchema) {
+		pth := strings.TrimPrefix(keystoreConfig.Path, fileSchema)
 		keystorePath, err = pathutil.AbsPath(pth)
 		if err != nil {
 			return nil, err
@@ -144,19 +157,16 @@ func (exporter Exporter) prepareKeystoreConfig(keystoreConfig *bundletool.Keysto
 	return newConfig, nil
 }
 
-// universalAPKName returns the aab's universal apk pair's base name.
-func universalAPKName(aabPath string) string {
-	untrimmedAPKName := UniversalAPKBase(aabPath)
-	extension := filepath.Ext(untrimmedAPKName)
-	fileNameWithoutExtension := strings.TrimSuffix(untrimmedAPKName, extension)
-	trimmedFileName := strings.Trim(fileNameWithoutExtension, "-")
-	return trimmedFileName + extension
+// Prefix passwords.
+func (exporter Exporter) prepareKeystoreConfigPasswords(keystoreConfig *bundletool.KeystoreConfig) {
+	keystoreConfig.KeystorePassword = prefixWithPass(keystoreConfig.KeystorePassword)
+	keystoreConfig.SigningKeyPassword = prefixWithPass(keystoreConfig.SigningKeyPassword)
 }
 
 func (exporter Exporter) exportAPKs(aabPath, tempPath string, keystoreConfig *bundletool.KeystoreConfig) (string, error) {
 	apksPath := filepath.Join(tempPath, apksFilename(aabPath))
 
-	buildAPKsCommand := exporter.bundletooler.BuildAPKs(aabPath, apksPath, keystoreConfig)
+	buildAPKsCommand := exporter.apkBuilder.BuildAPKs(aabPath, apksPath, keystoreConfig)
 	err := run(buildAPKsCommand)
 	if err != nil {
 		return "", err
@@ -166,15 +176,22 @@ func (exporter Exporter) exportAPKs(aabPath, tempPath string, keystoreConfig *bu
 }
 
 func apksFilename(aabPath string) string {
-	return filenameWithExtension(aabPath, ".apks")
+	return filenameWithExtension(aabPath, apksExtension)
 }
 
 func apkFilename(apksPath string) string {
-	return filenameWithExtension(apksPath, ".apk")
+	return filenameWithExtension(apksPath, apkExtension)
 }
 
 func filenameWithExtension(basepath, extension string) string {
 	filename := filepath.Base(basepath)
 	fileNameWithoutExtension := strings.TrimSuffix(filename, filepath.Ext(filename))
 	return fileNameWithoutExtension + extension
+}
+
+func prefixWithPass(s string) string {
+	if !strings.HasPrefix(s, passPrefix) {
+		return passPrefix + s
+	}
+	return s
 }

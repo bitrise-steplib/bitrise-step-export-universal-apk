@@ -46,14 +46,19 @@ func Test_prepareKeystoreConfig_File(t *testing.T) {
 	mockAPKBuilder := givenMockedAPKBuilder(givenSuccessfulCommand())
 	mockFileDownloader := givenMockFileDownloader()
 	exporter := givenExporter(mockAPKBuilder, mockFileDownloader)
+	keystoreConfig := givenKeystoreConfig("file://keystore.keystore")
+	keystoreConfig.KeystorePassword = "pass:password"
+	keystoreConfig.SigningKeyPassword = "pass:password"
 
 	// When
-	output, err := exporter.prepareKeystoreConfig(givenKeystoreConfig("file://keystore.keystore"))
+	output, err := exporter.prepareKeystoreConfig(keystoreConfig)
 
 	// Then
 	require.NoError(t, err)
 	require.Contains(t, output.Path, "keystore.keystore")
 	require.NotContains(t, output.Path, "file://")
+	require.Equal(t, output.KeystorePassword, "pass:password")
+	require.Equal(t, output.SigningKeyPassword, "pass:password")
 }
 
 func Test_prepareKeystoreConfig_SuccessDownload(t *testing.T) {
@@ -68,6 +73,8 @@ func Test_prepareKeystoreConfig_SuccessDownload(t *testing.T) {
 	// Then
 	require.NoError(t, err)
 	require.Contains(t, output.Path, "keystore.keystore")
+	require.Equal(t, output.KeystorePassword, "pass:password")
+	require.Equal(t, output.SigningKeyPassword, "pass:password")
 }
 
 func Test_prepareKeystoreConfig_FaillingDownload(t *testing.T) {
