@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/bitrise-io/go-steputils/tools"
 	"github.com/bitrise-io/go-utils/log"
@@ -15,12 +16,13 @@ import (
 
 // Config is defining the input arguments required by the Step.
 type Config struct {
-	DeployDir        string `env:"BITRISE_DEPLOY_DIR"`
-	AABPath          string `env:"aab_path,required"`
-	KeystoreURL      string `env:"keystore_url"`
-	KeystotePassword string `env:"keystore_password"`
-	KeyAlias         string `env:"key_alias"`
-	KeyPassword      string `env:"private_key_password"`
+	DeployDir         string `env:"BITRISE_DEPLOY_DIR"`
+	AABPath           string `env:"aab_path,required"`
+	KeystoreURL       string `env:"keystore_url"`
+	KeystotePassword  string `env:"keystore_password"`
+	KeyAlias          string `env:"keystore_alias"`
+	KeyPassword       string `env:"private_key_password"`
+	BundletoolVersion string `env:"bundletool_version"`
 }
 
 func main() {
@@ -31,7 +33,7 @@ func main() {
 	stepconf.Print(config)
 	fmt.Println()
 
-	bundletoolTool, err := bundletool.New("0.15.0", filedownloader.New(http.DefaultClient))
+	bundletoolTool, err := bundletool.New(config.BundletoolVersion, filedownloader.New(http.DefaultClient))
 	log.Infof("bundletool path created at: %s", bundletoolTool.Path())
 	if err != nil {
 		failf("Failed to initialize bundletool: %s \n", err)
@@ -48,7 +50,7 @@ func main() {
 		failf("Failed to export APK_PATH, error: %s \n", err)
 	}
 
-	log.Donef("Success APK exported to: %s", apkPath)
+	log.Donef("Success! APK exported to: %s", apkPath)
 	os.Exit(0)
 }
 
@@ -61,7 +63,7 @@ func parseKeystoreConfig(config Config) *bundletool.KeystoreConfig {
 	}
 
 	return &bundletool.KeystoreConfig{
-		Path:               config.KeystoreURL,
+		Path:               strings.TrimSpace(config.KeystoreURL),
 		KeystorePassword:   config.KeystotePassword,
 		SigningKeyAlias:    config.KeyAlias,
 		SigningKeyPassword: config.KeyPassword}
