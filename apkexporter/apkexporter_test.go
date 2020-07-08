@@ -56,7 +56,7 @@ func Test_prepareKeystoreConfig_File(t *testing.T) {
 	// Then
 	require.NoError(t, err)
 	require.Contains(t, output.Path, "keystore.keystore")
-	require.NotContains(t, output.Path, "file://")
+	require.NotContains(t, output.Path, "file:/")
 	require.Equal(t, output.KeystorePassword, "pass:password")
 	require.Equal(t, output.SigningKeyPassword, "pass:password")
 }

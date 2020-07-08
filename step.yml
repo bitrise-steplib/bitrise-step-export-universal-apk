@@ -73,7 +73,7 @@ inputs:
       is_expand: true
 
 outputs:
-  - APK_PATH:
+  - BITRISE_APK_PATH:
     opts:
       title: "Example Step Output"
       summary: Summary. No more than 2-3 sentences.

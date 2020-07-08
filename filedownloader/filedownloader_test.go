@@ -38,7 +38,7 @@ func Test_get_InvalidStatusCode(t *testing.T) {
 	path := givenTempPath(t)
 	url := "http://url.com"
 	statusCode := 404
-	expectedErr := fmt.Errorf("Unable to download file from: %s. Status code: %d", url, statusCode)
+	expectedErr := fmt.Errorf("unable to download file from: %s. Status code: %d", url, statusCode)
 	mockedHTTPClient := givenHTTPClient(
 		http.Response{
 			StatusCode: statusCode,

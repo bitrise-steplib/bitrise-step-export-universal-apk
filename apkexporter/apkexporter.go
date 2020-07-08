@@ -17,7 +17,7 @@ import (
 
 const (
 	passPrefix    = "pass:"
-	fileSchema    = "file://"
+	fileSchema    = "file:/"
 	apksExtension = ".apks"
 	apkExtension  = ".apk"
 )

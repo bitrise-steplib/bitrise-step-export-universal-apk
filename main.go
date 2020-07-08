@@ -34,10 +34,10 @@ func main() {
 	fmt.Println()
 
 	bundletoolTool, err := bundletool.New(config.BundletoolVersion, filedownloader.New(http.DefaultClient))
-	log.Infof("bundletool path created at: %s", bundletoolTool.Path())
 	if err != nil {
 		failf("Failed to initialize bundletool: %s \n", err)
 	}
+	log.Infof("bundletool path created at: %s", bundletoolTool.Path())
 
 	exporter := apkexporter.New(bundletoolTool, filedownloader.New(http.DefaultClient))
 	keystoreCfg := parseKeystoreConfig(config)
@@ -46,8 +46,8 @@ func main() {
 		failf("Failed to export apk, error: %s \n", err)
 	}
 
-	if err = tools.ExportEnvironmentWithEnvman("APK_PATH", apkPath); err != nil {
-		failf("Failed to export APK_PATH, error: %s \n", err)
+	if err = tools.ExportEnvironmentWithEnvman("BITRISE_APK_PATH", apkPath); err != nil {
+		failf("Failed to export BITRISE_APK_PATH, error: %s \n", err)
 	}
 
 	log.Donef("Success! APK exported to: %s", apkPath)
