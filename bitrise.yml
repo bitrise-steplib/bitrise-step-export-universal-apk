@@ -47,6 +47,10 @@ workflows:
         run_if: true
         inputs:
           - aab_path: "./app-bitrise-signed.aab"
+          - keystore_url: ""
+          - keystore_password: ""
+          - keystore_alias: ""
+          - private_key_password: ""
     after_run:
       - check_outputs
       - clear_artifacts
@@ -58,10 +62,10 @@ workflows:
         run_if: true
         inputs:
           - aab_path: "./app-bitrise-signed.aab"
-          - keystore_url: "file://Users/adam.borbas/work/export-apk-from-aab/debug.keystore"
-          - keystore_password: "android"
-          - keystore_alias: "androidkey"
-          - private_key_password: "android"
+          - keystore_url: $BITRISEIO_ANDROID_KEYSTORE_URL
+          - keystore_password: $BITRISEIO_ANDROID_KEYSTORE_PASSWORD
+          - keystore_alias: $BITRISEIO_ANDROID_KEYSTORE_ALIAS
+          - private_key_password: $BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
     after_run:
       - check_outputs
       - clear_artifacts
