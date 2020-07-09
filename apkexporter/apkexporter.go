@@ -3,6 +3,7 @@ package apkexporter
 import (
 	"errors"
 	"fmt"
+	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -145,7 +146,12 @@ func (exporter Exporter) prepareKeystorePath(keystoreConfig *bundletool.Keystore
 		}
 	} else {
 		log.Infof("Download keystore from: %s", keystoreConfig.Path)
-		keystorePath = path.Join(tmpDir, filepath.Base(keystoreConfig.Path))
+		keystoreName, err := keystoreName(keystoreConfig.Path)
+		if err != nil {
+			return nil, err
+		}
+
+		keystorePath := path.Join(tmpDir, keystoreName)
 		if err := exporter.filedownloader.Get(keystorePath, keystoreConfig.Path); err != nil {
 			return nil, err
 		}
@@ -155,6 +161,15 @@ func (exporter Exporter) prepareKeystorePath(keystoreConfig *bundletool.Keystore
 	newConfig := keystoreConfig
 	newConfig.Path = keystorePath
 	return newConfig, nil
+}
+
+func keystoreName(path string) (string, error) {
+	url, err := url.Parse(path)
+	if err != nil {
+		return "", err
+	}
+
+	return filepath.Base(url.Path), nil
 }
 
 // Prefix passwords.

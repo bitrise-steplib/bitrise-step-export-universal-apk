@@ -68,7 +68,7 @@ func Test_prepareKeystoreConfig_SuccessDownload(t *testing.T) {
 	exporter := givenExporter(mockAPKBuilder, mockFileDownloader)
 
 	// When
-	output, err := exporter.prepareKeystoreConfig(givenKeystoreConfig("http://url.com/keystore.keystore"))
+	output, err := exporter.prepareKeystoreConfig(givenKeystoreConfig("http://url.com/keystore.keystore?asdasda"))
 
 	// Then
 	require.NoError(t, err)
@@ -126,6 +126,22 @@ func Test_filenameWithExtension(t *testing.T) {
 
 	// Then
 	require.Equal(t, expectedFilename, actualFilename)
+}
+
+func Test_keystoreName(t *testing.T) {
+	scenarios := []string{
+		"https://something.com/debug.keystore",
+		"https://something.com/debug.keystore?queryparams",
+		"https://something.com/path/debug.keystore",
+		"https://something.com/path/debug.keystore?queryparams",
+	}
+
+	for _, scenario := range scenarios {
+		actualName, err := keystoreName(scenario)
+
+		require.NoError(t, err)
+		require.Equal(t, "debug.keystore", actualName)
+	}
 }
 
 type MockFileDownloader struct {
