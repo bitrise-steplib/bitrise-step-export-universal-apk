@@ -46,7 +46,7 @@ func Test_prepareKeystoreConfig_File(t *testing.T) {
 	mockAPKBuilder := givenMockedAPKBuilder(givenSuccessfulCommand())
 	mockFileDownloader := givenMockFileDownloader()
 	exporter := givenExporter(mockAPKBuilder, mockFileDownloader)
-	keystoreConfig := givenKeystoreConfig("file://keystore.keystore")
+	keystoreConfig := givenKeystoreConfig("file://keystore.jks")
 	keystoreConfig.KeystorePassword = "pass:password"
 	keystoreConfig.SigningKeyPassword = "pass:password"
 
@@ -55,7 +55,7 @@ func Test_prepareKeystoreConfig_File(t *testing.T) {
 
 	// Then
 	require.NoError(t, err)
-	require.Contains(t, output.Path, "keystore.keystore")
+	require.Contains(t, output.Path, "keystore.jks")
 	require.NotContains(t, output.Path, "file:/")
 	require.Equal(t, output.KeystorePassword, "pass:password")
 	require.Equal(t, output.SigningKeyPassword, "pass:password")
@@ -68,11 +68,11 @@ func Test_prepareKeystoreConfig_SuccessDownload(t *testing.T) {
 	exporter := givenExporter(mockAPKBuilder, mockFileDownloader)
 
 	// When
-	output, err := exporter.prepareKeystoreConfig(givenKeystoreConfig("http://url.com/keystore.keystore"))
+	output, err := exporter.prepareKeystoreConfig(givenKeystoreConfig("http://url.com/keystore.jks"))
 
 	// Then
 	require.NoError(t, err)
-	require.Contains(t, output.Path, "keystore.keystore")
+	require.Contains(t, output.Path, "keystore.jks")
 	require.Equal(t, output.KeystorePassword, "pass:password")
 	require.Equal(t, output.SigningKeyPassword, "pass:password")
 }
@@ -130,17 +130,17 @@ func Test_filenameWithExtension(t *testing.T) {
 
 func Test_keystoreName(t *testing.T) {
 	scenarios := []string{
-		"https://something.com/debug.keystore",
-		"https://something.com/debug.keystore?queryparams",
-		"https://something.com/path/debug.keystore",
-		"https://something.com/path/debug.keystore?queryparams",
+		"https://something.com/debug-keystore.jks",
+		"https://something.com/debug-keystore.jks?queryparams",
+		"https://something.com/path/debug-keystore.jks",
+		"https://something.com/path/debug-keystore.jks?queryparams",
 	}
 
 	for _, scenario := range scenarios {
 		actualName, err := keystoreName(scenario)
 
 		require.NoError(t, err)
-		require.Equal(t, "debug.keystore", actualName)
+		require.Equal(t, "debug-keystore.jks", actualName)
 	}
 }
 
