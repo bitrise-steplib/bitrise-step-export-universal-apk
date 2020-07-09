@@ -68,7 +68,7 @@ func Test_prepareKeystoreConfig_SuccessDownload(t *testing.T) {
 	exporter := givenExporter(mockAPKBuilder, mockFileDownloader)
 
 	// When
-	output, err := exporter.prepareKeystoreConfig(givenKeystoreConfig("http://url.com/keystore.keystore?asdasda"))
+	output, err := exporter.prepareKeystoreConfig(givenKeystoreConfig("http://url.com/keystore.keystore"))
 
 	// Then
 	require.NoError(t, err)

@@ -151,7 +151,7 @@ func (exporter Exporter) prepareKeystorePath(keystoreConfig *bundletool.Keystore
 			return nil, err
 		}
 
-		keystorePath := path.Join(tmpDir, keystoreName)
+		keystorePath = path.Join(tmpDir, keystoreName)
 		if err := exporter.filedownloader.Get(keystorePath, keystoreConfig.Path); err != nil {
 			return nil, err
 		}
