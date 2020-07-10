@@ -18,7 +18,7 @@ import (
 
 const (
 	passPrefix    = "pass:"
-	fileSchema    = "file:/"
+	fileSchema    = "file://"
 	apksExtension = ".apks"
 	apkExtension  = ".apk"
 )
@@ -139,14 +139,13 @@ func (exporter Exporter) prepareKeystorePath(keystoreConfig *bundletool.Keystore
 
 	keystorePath := ""
 	if strings.HasPrefix(keystoreConfig.Path, fileSchema) {
-		pth := strings.TrimPrefix(keystoreConfig.Path, fileSchema)
-		keystorePath, err = pathutil.AbsPath(pth)
+		keystorePath, err = trimmedFilePath(keystoreConfig.Path)
 		if err != nil {
 			return nil, err
 		}
 	} else {
 		log.Infof("Download keystore from: %s", keystoreConfig.Path)
-		keystoreName, err := keystoreName(keystoreConfig.Path)
+		keystoreName, err := keystoreNameFromURL(keystoreConfig.Path)
 		if err != nil {
 			return nil, err
 		}
@@ -163,7 +162,15 @@ func (exporter Exporter) prepareKeystorePath(keystoreConfig *bundletool.Keystore
 	return newConfig, nil
 }
 
-func keystoreName(path string) (string, error) {
+// Removes file:// from the begining of the path
+func trimmedFilePath(path string) (string, error) {
+	pth := strings.TrimPrefix(path, fileSchema)
+	return pathutil.AbsPath(pth)
+}
+
+// Returns the keystore's name from a URl that starts with
+// `http://` or `https://`
+func keystoreNameFromURL(path string) (string, error) {
 	url, err := url.Parse(path)
 	if err != nil {
 		return "", err

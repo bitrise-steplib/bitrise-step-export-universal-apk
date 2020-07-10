@@ -25,15 +25,15 @@
     "urlutil",
   ]
   pruneopts = "UT"
-  revision = "e212188d99b41373b4ff8b69e7b1f677bc427bde"
+  revision = "0c47c16813a4209321c9d0dba2e75867d6901ff2"
 
 [[projects]]
-  branch = "master"
   digest = "1:26e714e21bef4fc07640fb796ccce6d4f9423e15b2d660e131a8e61a0ee576d5"
   name = "github.com/bitrise-steplib/steps-xcode-test"
   packages = ["pretty"]
   pruneopts = "UT"
   revision = "c5bca453fef5ea652139eb3ea0e41f594fc2a51d"
+  version = "2.4.6"
 
 [[projects]]
   branch = "master"

@@ -62,10 +62,6 @@ workflows:
         run_if: true
         inputs:
           - aab_path: "./app-bitrise-signed.aab"
-          - keystore_url: $BITRISEIO_ANDROID_KEYSTORE_URL
-          - keystore_password: $BITRISEIO_ANDROID_KEYSTORE_PASSWORD
-          - keystore_alias: $BITRISEIO_ANDROID_KEYSTORE_ALIAS
-          - private_key_password: $BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
     after_run:
       - assert-outputs
       - clear-artifacts

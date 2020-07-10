@@ -2,9 +2,11 @@ package apkexporter
 
 import (
 	"errors"
+	"path/filepath"
 	"testing"
 
 	"github.com/bitrise-io/go-utils/command"
+	"github.com/bitrise-io/go-utils/pathutil"
 	"github.com/bitrise-steplib/bitrise-step-generate-universal-apk/bundletool"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -46,7 +48,7 @@ func Test_prepareKeystoreConfig_File(t *testing.T) {
 	mockAPKBuilder := givenMockedAPKBuilder(givenSuccessfulCommand())
 	mockFileDownloader := givenMockFileDownloader()
 	exporter := givenExporter(mockAPKBuilder, mockFileDownloader)
-	keystoreConfig := givenKeystoreConfig("file://keystore.jks")
+	keystoreConfig := givenKeystoreConfig("file:///keystore.jks")
 	keystoreConfig.KeystorePassword = "pass:password"
 	keystoreConfig.SigningKeyPassword = "pass:password"
 
@@ -55,8 +57,7 @@ func Test_prepareKeystoreConfig_File(t *testing.T) {
 
 	// Then
 	require.NoError(t, err)
-	require.Contains(t, output.Path, "keystore.jks")
-	require.NotContains(t, output.Path, "file:/")
+	require.Equal(t, output.Path, "/keystore.jks")
 	require.Equal(t, output.KeystorePassword, "pass:password")
 	require.Equal(t, output.SigningKeyPassword, "pass:password")
 }
@@ -72,7 +73,7 @@ func Test_prepareKeystoreConfig_SuccessDownload(t *testing.T) {
 
 	// Then
 	require.NoError(t, err)
-	require.Contains(t, output.Path, "keystore.jks")
+	require.Equal(t, filepath.Base(output.Path), "keystore.jks")
 	require.Equal(t, output.KeystorePassword, "pass:password")
 	require.Equal(t, output.SigningKeyPassword, "pass:password")
 }
@@ -128,7 +129,40 @@ func Test_filenameWithExtension(t *testing.T) {
 	require.Equal(t, expectedFilename, actualFilename)
 }
 
-func Test_keystoreName(t *testing.T) {
+func Test_trimmedFilePath(t *testing.T) {
+
+	absPath := func(path string) string {
+		pth, err := pathutil.AbsPath("file.txt")
+		if err != nil {
+			return err.Error()
+		}
+
+		return pth
+	}
+
+	scenarios := []struct {
+		filePath string
+		expected string
+	}{
+		{
+			filePath: "file://file.txt",
+			expected: absPath("file.txt"),
+		},
+		{
+			filePath: "file:///file.txt",
+			expected: "/file.txt",
+		},
+	}
+
+	for _, scenario := range scenarios {
+		actualFilePath, err := trimmedFilePath(scenario.filePath)
+
+		require.NoError(t, err)
+		require.Equal(t, scenario.expected, actualFilePath)
+	}
+}
+
+func Test_keystoreNameFromURL(t *testing.T) {
 	scenarios := []string{
 		"https://something.com/debug-keystore.jks",
 		"https://something.com/debug-keystore.jks?queryparams",
@@ -137,7 +171,7 @@ func Test_keystoreName(t *testing.T) {
 	}
 
 	for _, scenario := range scenarios {
-		actualName, err := keystoreName(scenario)
+		actualName, err := keystoreNameFromURL(scenario)
 
 		require.NoError(t, err)
 		require.Equal(t, "debug-keystore.jks", actualName)
