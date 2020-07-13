@@ -1,0 +1,4 @@
+.bitrise*
+.gows.user.yml
+*.test
+_tmp/

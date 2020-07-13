@@ -1,0 +1,83 @@
+title: |-
+  Generate Universal APK
+summary: |
+  Fancy summary
+description: |
+  Generate Universal APK is step that can be used to create an universal APK from an AAB.
+website: https://github.com/bitrise-steplib/bitrise-step-generate-universal-apk
+source_code_url: https://github.com/bitrise-steplib/bitrise-step-generate-universal-apk
+support_url: https://github.com/bitrise-steplib/bitrise-step-generate-universal-apk/issues
+host_os_tags:
+  - osx-10.10
+  - ubuntu-16.04
+project_type_tags:
+  - android
+type_tags:
+  - test
+
+is_requires_admin_user: true
+is_always_run: false
+is_skippable: false
+run_if: ""
+
+toolkit:
+  go:
+    package_name: github.com/bitrise-steplib/bitrise-step-generate-universal-apk
+
+inputs:
+  - aab_path:
+    opts:
+      title: "The path of the AAB."
+      summary: Summary. No more than 2-3 sentences.
+      description: |
+        Description of this input.
+
+        Can be Markdown formatted text.
+      is_expand: true
+      is_required: true
+  - keystore_url: $BITRISEIO_ANDROID_KEYSTORE_URL
+    opts:
+      title: "Keystore url"
+      summary: ""
+      description: |-
+        TO BE FILLED
+      is_required: true
+      is_sensitive: true
+  - keystore_password: $BITRISEIO_ANDROID_KEYSTORE_PASSWORD
+    opts:
+      title: "Keystore password"
+      summary: ""
+      description: ""
+      is_required: true
+      is_sensitive: true
+  - keystore_alias: $BITRISEIO_ANDROID_KEYSTORE_ALIAS
+    opts:
+      title: "Keystore alias"
+      summary: ""
+      description: ""
+      is_required: true
+      is_sensitive: true
+  - private_key_password: $BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
+    opts:
+      title: "Private key password"
+      summary: ""
+      description: |
+        If key password equals to keystore password, you can leave it empty.
+        Otherwise specify the private key password.
+      is_sensitive: true
+  - bundletool_version: "0.15.0"
+    opts:
+      title: Version of bundletool to use.
+      summary: |
+        Versions are available here: https://github.com/google/bundletool/releases
+      is_expand: true
+
+outputs:
+  - BITRISE_APK_PATH:
+    opts:
+      title: "Example Step Output"
+      summary: Summary. No more than 2-3 sentences.
+      description: |
+        Description of this output.
+
+        Can be Markdown formatted text.
