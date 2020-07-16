@@ -48,31 +48,28 @@ inputs:
       title: "Android App Bundle path"
       summary: "Android App Bundle file (`.aab`) path"
       description: |
-        Description of this input.
-
-        Can be Markdown formatted text.
+        The **Android App Bundle path** input field is automatically filled out by the output of the previous build Step
       is_expand: true
       is_required: true
   - keystore_url: $BITRISEIO_ANDROID_KEYSTORE_URL
     opts:
       title: "Keystore URL"
       summary: "The keystore file's URL which is generated when you upload the file to the Code Signing tab."
-      description: |-
-        TO BE FILLED
+      description: |
       is_required: true
       is_sensitive: true
   - keystore_password: $BITRISEIO_ANDROID_KEYSTORE_PASSWORD
     opts:
       title: "Keystore password"
       summary: "The password you added to the keystore."
-      description: ""
+      description:  |
       is_required: true
       is_sensitive: true
   - keystore_alias: $BITRISEIO_ANDROID_KEYSTORE_ALIAS
     opts:
       title: "Keystore alias"
       summary: "Identifier name you added to the keystore."
-      description: ""
+      description:  |
       is_required: true
       is_sensitive: true
   - private_key_password: $BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
@@ -81,11 +78,12 @@ inputs:
       summary: "Password you added to the private key."
       description:
       is_sensitive: true
-  - bundletool_version: "0.15.0"
+  - bundletool_version: "1.0.0"
     opts:
       title: "Bundletool version"
       summary: "The latest Bundletool version is set automatically."
-      description: "If you wish to set a specific version other than the latest, add it here based on [Bundletool's official release](https://github.com/google/bundletool/releases) page."
+      description:  |
+      "If you wish to set a specific version other than the latest, add it here based on [Bundletool's official release](https://github.com/google/bundletool/releases) page."
         Versions are available here: https://github.com/google/bundletool/releases
       is_expand: true
 
@@ -95,6 +93,4 @@ outputs:
       title: "The exported APK's path"
       summary: "The APK is exported to this output Environment Variable and can be picked up by the next Step or Ship."
       description: |
-        Description of this output.
-
-        Can be Markdown formatted text.
+       
