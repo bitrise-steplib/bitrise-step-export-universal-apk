@@ -55,21 +55,21 @@ inputs:
     opts:
       title: "Keystore URL"
       summary: "The keystore file's URL which is generated when you upload the file to the Code Signing tab."
-      description: |
+      description: ""
       is_required: true
       is_sensitive: true
   - keystore_password: $BITRISEIO_ANDROID_KEYSTORE_PASSWORD
     opts:
       title: "Keystore password"
       summary: "The password you added to the keystore."
-      description:  |
+      description:  ""
       is_required: true
       is_sensitive: true
   - keystore_alias: $BITRISEIO_ANDROID_KEYSTORE_ALIAS
     opts:
       title: "Keystore alias"
       summary: "Identifier name you added to the keystore."
-      description:  |
+      description:  ""
       is_required: true
       is_sensitive: true
   - private_key_password: $BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
@@ -82,8 +82,7 @@ inputs:
     opts:
       title: "Bundletool version"
       summary: "The latest Bundletool version is set automatically."
-      description:  |
-      "If you wish to set a specific version other than the latest, add it here based on [Bundletool's official release](https://github.com/google/bundletool/releases) page. Versions are available here: https://github.com/google/bundletool/releases"
+      description:  "If you wish to set a specific version other than the latest, add it here based on [Bundletool's official release](https://github.com/google/bundletool/releases) page. Versions are available here: https://github.com/google/bundletool/releases"
       is_expand: true
 
 outputs:
@@ -91,5 +90,5 @@ outputs:
     opts:
       title: "The exported APK's path"
       summary: "The APK is exported to this output Environment Variable and can be picked up by the next Step or Ship."
-      description: |
+      description: ""
        
