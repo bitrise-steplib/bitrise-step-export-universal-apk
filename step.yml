@@ -83,8 +83,7 @@ inputs:
       title: "Bundletool version"
       summary: "The latest Bundletool version is set automatically."
       description:  |
-      "If you wish to set a specific version other than the latest, add it here based on [Bundletool's official release](https://github.com/google/bundletool/releases) page."
-        Versions are available here: https://github.com/google/bundletool/releases
+      "If you wish to set a specific version other than the latest, add it here based on [Bundletool's official release](https://github.com/google/bundletool/releases) page. Versions are available here: https://github.com/google/bundletool/releases"
       is_expand: true
 
 outputs:
