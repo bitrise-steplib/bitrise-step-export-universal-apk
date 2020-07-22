@@ -43,7 +43,7 @@ toolkit:
     package_name: github.com/bitrise-steplib/bitrise-step-generate-universal-apk
 
 inputs:
-  - aab_path:
+  - aab_path: $BITRISE_AAB_PATH
     opts:
       title: "Android App Bundle path"
       summary: "Android App Bundle file (`.aab`) path"

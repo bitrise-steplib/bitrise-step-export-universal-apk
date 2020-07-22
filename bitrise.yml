@@ -4,11 +4,12 @@ default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 app:
   envs:
   - SAMPLE_APP_URL: https://github.com/bitrise-io/sample-artifacts.git
+  - BITRISE_AAB_PATH: ./app-bitrise-signed.aab
   - ORIG_BITRISE_SOURCE_DIR: $BITRISE_SOURCE_DIR
 
 workflows:
-  test:
-    title: Test
+  ci:
+    title: CI
     before_run:
       - audit-this-step
     steps:
@@ -46,7 +47,6 @@ workflows:
           file if you would not specify another value.
         run_if: true
         inputs:
-          - aab_path: "./app-bitrise-signed.aab"
           - keystore_url: ""
           - keystore_password: ""
           - keystore_alias: ""
@@ -60,8 +60,6 @@ workflows:
     - path::./:
         title: Test with providing Keystore info
         run_if: true
-        inputs:
-          - aab_path: "./app-bitrise-signed.aab"
     after_run:
       - assert-outputs
       - clear-artifacts
