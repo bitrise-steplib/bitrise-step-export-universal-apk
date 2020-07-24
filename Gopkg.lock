@@ -28,18 +28,6 @@
   revision = "0c47c16813a4209321c9d0dba2e75867d6901ff2"
 
 [[projects]]
-  branch = "master"
-  digest = "1:2fa1bc2445062062159a1fbfafe1c3da61d33c4afcf57aa92243086f04db25a5"
-  name = "github.com/bitrise-steplib/bitrise-step-generate-universal-apk"
-  packages = [
-    "apkexporter",
-    "bundletool",
-    "filedownloader",
-  ]
-  pruneopts = "UT"
-  revision = "019a064dc2b1fc2a93ee6bdf0a6bb986277ffcfd"
-
-[[projects]]
   digest = "1:26e714e21bef4fc07640fb796ccce6d4f9423e15b2d660e131a8e61a0ee576d5"
   name = "github.com/bitrise-steplib/steps-xcode-test"
   packages = ["pretty"]
@@ -110,9 +98,6 @@
     "github.com/bitrise-io/go-utils/pathutil",
     "github.com/bitrise-io/go-utils/sliceutil",
     "github.com/bitrise-io/go-utils/urlutil",
-    "github.com/bitrise-steplib/bitrise-step-generate-universal-apk/apkexporter",
-    "github.com/bitrise-steplib/bitrise-step-generate-universal-apk/bundletool",
-    "github.com/bitrise-steplib/bitrise-step-generate-universal-apk/filedownloader",
     "github.com/bitrise-steplib/steps-xcode-test/pretty",
     "github.com/bitrise-tools/go-steputils/stepconf",
     "github.com/stretchr/testify/mock",

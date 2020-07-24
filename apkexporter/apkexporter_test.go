@@ -7,7 +7,7 @@ import (
 
 	"github.com/bitrise-io/go-utils/command"
 	"github.com/bitrise-io/go-utils/pathutil"
-	"github.com/bitrise-steplib/bitrise-step-generate-universal-apk/bundletool"
+	"github.com/bitrise-steplib/bitrise-step-export-universal-apk/bundletool"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )

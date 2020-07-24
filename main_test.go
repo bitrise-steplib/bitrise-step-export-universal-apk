@@ -3,7 +3,7 @@ package main
 import (
 	"testing"
 
-	"github.com/bitrise-steplib/bitrise-step-generate-universal-apk/bundletool"
+	"github.com/bitrise-steplib/bitrise-step-export-universal-apk/bundletool"
 	"github.com/stretchr/testify/require"
 )
 
