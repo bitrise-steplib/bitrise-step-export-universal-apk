@@ -8,9 +8,9 @@ import (
 
 	"github.com/bitrise-io/go-steputils/tools"
 	"github.com/bitrise-io/go-utils/log"
-	"github.com/bitrise-steplib/bitrise-step-generate-universal-apk/apkexporter"
-	"github.com/bitrise-steplib/bitrise-step-generate-universal-apk/bundletool"
-	"github.com/bitrise-steplib/bitrise-step-generate-universal-apk/filedownloader"
+	"github.com/bitrise-steplib/bitrise-step-export-universal-apk/apkexporter"
+	"github.com/bitrise-steplib/bitrise-step-export-universal-apk/bundletool"
+	"github.com/bitrise-steplib/bitrise-step-export-universal-apk/filedownloader"
 	"github.com/bitrise-tools/go-steputils/stepconf"
 )
 

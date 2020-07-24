@@ -13,7 +13,7 @@ import (
 	"github.com/bitrise-io/go-utils/errorutil"
 	"github.com/bitrise-io/go-utils/log"
 	"github.com/bitrise-io/go-utils/pathutil"
-	"github.com/bitrise-steplib/bitrise-step-generate-universal-apk/bundletool"
+	"github.com/bitrise-steplib/bitrise-step-export-universal-apk/bundletool"
 )
 
 const (

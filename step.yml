@@ -22,9 +22,9 @@ description: |
   ### Related Steps
   - [Android Sign](https://www.bitrise.io/integrations/steps/sign-apk)
   - [Android Build](https://www.bitrise.io/integrations/steps/android-build)
-website: https://github.com/bitrise-steplib/bitrise-step-generate-universal-apk
-source_code_url: https://github.com/bitrise-steplib/bitrise-step-generate-universal-apk
-support_url: https://github.com/bitrise-steplib/bitrise-step-generate-universal-apk/issues
+website: https://github.com/bitrise-steplib/bitrise-step-export-universal-apk
+source_code_url: https://github.com/bitrise-steplib/bitrise-step-export-universal-apk
+support_url: https://github.com/bitrise-steplib/bitrise-step-export-universal-apk/issues
 host_os_tags:
   - osx-10.10
   - ubuntu-16.04
@@ -40,7 +40,7 @@ run_if: ""
 
 toolkit:
   go:
-    package_name: github.com/bitrise-steplib/bitrise-step-generate-universal-apk
+    package_name: github.com/bitrise-steplib/bitrise-step-export-universal-apk
 
 inputs:
   - aab_path: $BITRISE_AAB_PATH
