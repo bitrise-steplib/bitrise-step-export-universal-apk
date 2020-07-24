@@ -7,7 +7,7 @@
   name = "github.com/bitrise-io/go-steputils"
   packages = ["tools"]
   pruneopts = "UT"
-  revision = "94490ca44ddb645764676a94988f6fc7e3187383"
+  revision = "6d5afa53c7b85b6135e382105116d245b5997ace"
 
 [[projects]]
   branch = "master"
@@ -28,6 +28,18 @@
   revision = "0c47c16813a4209321c9d0dba2e75867d6901ff2"
 
 [[projects]]
+  branch = "master"
+  digest = "1:2fa1bc2445062062159a1fbfafe1c3da61d33c4afcf57aa92243086f04db25a5"
+  name = "github.com/bitrise-steplib/bitrise-step-generate-universal-apk"
+  packages = [
+    "apkexporter",
+    "bundletool",
+    "filedownloader",
+  ]
+  pruneopts = "UT"
+  revision = "019a064dc2b1fc2a93ee6bdf0a6bb986277ffcfd"
+
+[[projects]]
   digest = "1:26e714e21bef4fc07640fb796ccce6d4f9423e15b2d660e131a8e61a0ee576d5"
   name = "github.com/bitrise-steplib/steps-xcode-test"
   packages = ["pretty"]
@@ -41,7 +53,7 @@
   name = "github.com/bitrise-tools/go-steputils"
   packages = ["stepconf"]
   pruneopts = "UT"
-  revision = "94490ca44ddb645764676a94988f6fc7e3187383"
+  revision = "6d5afa53c7b85b6135e382105116d245b5997ace"
 
 [[projects]]
   digest = "1:ffe9824d294da03b391f44e1ae8281281b4afc1bdaa9588c9097785e3af10cec"
@@ -60,12 +72,12 @@
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:23472f69a3ee7225de2f104aa48c6456959d1c155e45035c9845806d83109190"
+  digest = "1:86ff4af7b6bb3d27c2e89b5ef8c139678acff1cad74a3c5235fc5af6b94fcc9e"
   name = "github.com/stretchr/objx"
   packages = ["."]
   pruneopts = "UT"
-  revision = "ea4fe68685ee0d3cee7032121851b57e7494e8ea"
-  version = "v0.2.0"
+  revision = "35313a95ee26395aa17d366c71a2ccf788fa69b6"
+  version = "v0.3.0"
 
 [[projects]]
   digest = "1:fc44ab3ee6f79e2b4c67ea294f500aa151f7b882a706eb7f3e881aba1de3a729"
@@ -98,6 +110,9 @@
     "github.com/bitrise-io/go-utils/pathutil",
     "github.com/bitrise-io/go-utils/sliceutil",
     "github.com/bitrise-io/go-utils/urlutil",
+    "github.com/bitrise-steplib/bitrise-step-generate-universal-apk/apkexporter",
+    "github.com/bitrise-steplib/bitrise-step-generate-universal-apk/bundletool",
+    "github.com/bitrise-steplib/bitrise-step-generate-universal-apk/filedownloader",
     "github.com/bitrise-steplib/steps-xcode-test/pretty",
     "github.com/bitrise-tools/go-steputils/stepconf",
     "github.com/stretchr/testify/mock",
