@@ -82,7 +82,7 @@ inputs:
     opts:
       title: "Bundletool version"
       summary: "You can override this Bundletool version if you need a specific one."
-      description:  "If you wish to set a specific version, add it here based on [Bundletool's official release](https://github.com/google/bundletool/releases) page. Versions are available here: https://github.com/google/bundletool/releases"
+      description:  "If you wish to set a specific version, add it here based on [Bundletool's official release](https://github.com/google/bundletool/releases) page."
       is_expand: true
 
 outputs:
