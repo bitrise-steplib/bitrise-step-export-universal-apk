@@ -1,6 +1,6 @@
-# Generate Universal APK
+# Export Universal APK
 
-Generate Universal APK is step that can be used to create an universal APK from an AAB.
+Export Universal APK is step that can be used to create an universal APK from an AAB.
 
 ## How to use this Step
 
