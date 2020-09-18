@@ -60,6 +60,7 @@ If you want to use your step in your project's `bitrise.yml`:
 You can find more examples of step reference styles
 in the [bitrise CLI repository](https://github.com/bitrise-io/bitrise/blob/master/_examples/tutorials/steps-and-workflows/bitrise.yml#L65).
 
+
 ## How to contribute to this Step
 
 1. Fork this repository
