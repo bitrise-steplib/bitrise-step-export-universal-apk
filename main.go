@@ -11,7 +11,7 @@ import (
 	"github.com/bitrise-steplib/bitrise-step-export-universal-apk/apkexporter"
 	"github.com/bitrise-steplib/bitrise-step-export-universal-apk/bundletool"
 	"github.com/bitrise-steplib/bitrise-step-export-universal-apk/filedownloader"
-	"github.com/bitrise-tools/go-steputils/stepconf"
+	"github.com/bitrise-io/go-steputils/stepconf"
 )
 
 // Config is defining the input arguments required by the Step.
