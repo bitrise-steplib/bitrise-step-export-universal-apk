@@ -1,8 +1,8 @@
-# github.com/bitrise-io/go-steputils v0.0.0-20210505101226-8536c460c5c1
+# github.com/bitrise-io/go-steputils v0.0.0-20210514150206-5b6261447e77
 ## explicit
 github.com/bitrise-io/go-steputils/stepconf
 github.com/bitrise-io/go-steputils/tools
-# github.com/bitrise-io/go-utils v0.0.0-20210505130606-6269c7fd64f3
+# github.com/bitrise-io/go-utils v0.0.0-20210517140706-aa64fd88ca49
 ## explicit
 github.com/bitrise-io/go-utils/colorstring
 github.com/bitrise-io/go-utils/command
@@ -11,11 +11,9 @@ github.com/bitrise-io/go-utils/log
 github.com/bitrise-io/go-utils/parseutil
 github.com/bitrise-io/go-utils/pathutil
 github.com/bitrise-io/go-utils/pointers
+github.com/bitrise-io/go-utils/pretty
 github.com/bitrise-io/go-utils/sliceutil
 github.com/bitrise-io/go-utils/urlutil
-# github.com/bitrise-steplib/steps-xcode-test v0.0.0-20210504122558-8d13146f093c
-## explicit
-github.com/bitrise-steplib/steps-xcode-test/pretty
 # github.com/davecgh/go-spew v1.1.1
 github.com/davecgh/go-spew/spew
 # github.com/pmezard/go-difflib v1.0.0
