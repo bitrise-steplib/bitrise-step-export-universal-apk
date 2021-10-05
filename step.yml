@@ -78,7 +78,7 @@ inputs:
       summary: "Password you added to the private key."
       description:
       is_sensitive: true
-  - bundletool_version: "1.0.0"
+  - bundletool_version: "1.8.1"
     opts:
       title: "Bundletool version"
       summary: "You can override this Bundletool version if you need a specific one."
