@@ -2,3 +2,4 @@
 .gows.user.yml
 *.test
 _tmp/
+.idea/
