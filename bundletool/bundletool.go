@@ -23,7 +23,7 @@ type KeystoreConfig struct {
 }
 
 const (
-	githubReleaseBaseURL = "https://github.com/google/bundletool/releases/download"
+	GithubReleaseBaseURL = "https://github.com/google/bundletool/releases/download"
 	bundletoolAllJarName = "bundletool-all.jar"
 )
 
@@ -43,7 +43,7 @@ type FileDownloader interface {
 }
 
 // New downloads the bundletool executable from Github and places it to a temporary path.
-func New(version string, downloader FileDownloader) (*Tool, error) {
+func New(version string, downloader FileDownloader, baseURL string) (*Tool, error) {
 	tmpPth, err := pathutil.NormalizedOSTempDirPath("tool")
 	if err != nil {
 		return nil, err
@@ -51,7 +51,7 @@ func New(version string, downloader FileDownloader) (*Tool, error) {
 
 	toolPath := filepath.Join(tmpPth, bundletoolAllJarName)
 
-	sources, err := sources(version)
+	sources, err := sources(version, baseURL)
 	if err != nil {
 		return nil, err
 	}
@@ -88,14 +88,14 @@ func (tool Tool) BuildAPKs(aabPath, apksPath string, keystoreCfg *KeystoreConfig
 	return tool.BuildCommand("build-apks", args...)
 }
 
-func sources(version string) ([]string, error) {
+func sources(version, baseURL string) ([]string, error) {
 	urls := []string{}
-	url, err := urlutil.Join(githubReleaseBaseURL, version, "bundletool-all-"+version+".jar")
+	url, err := urlutil.Join(baseURL, version, "bundletool-all-"+version+".jar")
 	if err != nil {
 		return nil, err
 	}
 	urls = append(urls, url)
-	url, err = urlutil.Join(githubReleaseBaseURL, version, bundletoolAllJarName)
+	url, err = urlutil.Join(baseURL, version, bundletoolAllJarName)
 	if err != nil {
 		return nil, err
 	}
