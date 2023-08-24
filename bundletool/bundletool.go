@@ -23,6 +23,7 @@ type KeystoreConfig struct {
 }
 
 const (
+	// GithubReleaseBaseURL ...
 	GithubReleaseBaseURL = "https://github.com/google/bundletool/releases/download"
 	bundletoolAllJarName = "bundletool-all.jar"
 )
