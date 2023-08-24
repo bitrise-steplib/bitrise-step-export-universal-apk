@@ -105,11 +105,12 @@ func (exporter Exporter) ExportUniversalAPK(aabPath, destDir string, keystoreCon
 	}
 
 	universalAPKName := UniversalAPKBase(aabPath)
-	if err := command.CopyFile(universalAPKPath, filepath.Join(destDir, universalAPKName)); err != nil {
+	destinationPath := filepath.Join(destDir, universalAPKName)
+	if err := command.CopyFile(universalAPKPath, destinationPath); err != nil {
 		return "", err
 	}
 
-	return universalAPKPath, nil
+	return destinationPath, nil
 }
 
 // Prepares the KeystoreConfig for use. For example: download the keystore file or prefix passwords.
