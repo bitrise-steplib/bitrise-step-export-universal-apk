@@ -2,16 +2,17 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 	"os"
 	"strings"
 
+	"github.com/bitrise-io/go-steputils/stepconf"
 	"github.com/bitrise-io/go-steputils/tools"
 	"github.com/bitrise-io/go-utils/log"
+	logv2 "github.com/bitrise-io/go-utils/v2/log"
+	"github.com/bitrise-io/go-utils/v2/retryhttp"
 	"github.com/bitrise-steplib/bitrise-step-export-universal-apk/apkexporter"
 	"github.com/bitrise-steplib/bitrise-step-export-universal-apk/bundletool"
 	"github.com/bitrise-steplib/bitrise-step-export-universal-apk/filedownloader"
-	"github.com/bitrise-io/go-steputils/stepconf"
 )
 
 // Config is defining the input arguments required by the Step.
@@ -33,13 +34,14 @@ func main() {
 	stepconf.Print(config)
 	fmt.Println()
 
-	bundletoolTool, err := bundletool.New(config.BundletoolVersion, filedownloader.New(http.DefaultClient))
+	httpClient := retryhttp.NewClient(logv2.NewLogger())
+	bundletoolTool, err := bundletool.New(config.BundletoolVersion, filedownloader.New(httpClient), bundletool.GithubReleaseBaseURL)
 	if err != nil {
 		failf("Failed to initialize bundletool: %s \n", err)
 	}
 	log.Infof("bundletool path created at: %s", bundletoolTool.Path())
 
-	exporter := apkexporter.New(bundletoolTool, filedownloader.New(http.DefaultClient))
+	exporter := apkexporter.New(bundletoolTool, filedownloader.New(httpClient))
 	keystoreCfg := parseKeystoreConfig(config)
 	apkPath, err := exporter.ExportUniversalAPK(config.AABPath, config.DeployDir, keystoreCfg)
 	if err != nil {

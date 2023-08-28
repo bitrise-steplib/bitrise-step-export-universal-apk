@@ -2,12 +2,41 @@ package bundletool
 
 import (
 	"errors"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"testing"
 
+	logv2 "github.com/bitrise-io/go-utils/v2/log"
+	"github.com/bitrise-io/go-utils/v2/retryhttp"
+	"github.com/bitrise-steplib/bitrise-step-export-universal-apk/filedownloader"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
+
+func Test_Bundletool_Download(t *testing.T) {
+	bundletoolversion := "1.15.4"
+	downloader := filedownloader.New(retryhttp.NewClient(logv2.NewLogger()))
+
+	reqNum := 0
+	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/1.15.4/bundletool-all-1.15.4.jar" {
+			if reqNum == 0 {
+				w.WriteHeader(http.StatusInternalServerError)
+			} else {
+				w.WriteHeader(http.StatusOK)
+			}
+			reqNum++
+		} else {
+			w.WriteHeader(http.StatusBadRequest)
+		}
+
+	}))
+	defer svr.Close()
+
+	_, err := New(bundletoolversion, downloader, svr.URL)
+	require.NoError(t, err)
+}
 
 func Test_BuildCommand(t *testing.T) {
 	// Given
@@ -63,7 +92,7 @@ func Test_sources(t *testing.T) {
 	}
 
 	// When
-	actualSources, err := sources(version)
+	actualSources, err := sources(version, GithubReleaseBaseURL)
 
 	//Then
 	require.NoError(t, err)
@@ -76,7 +105,7 @@ func Test_New_Success(t *testing.T) {
 	mockedFileDownloader.On("GetWithFallback", mock.Anything, mock.Anything, mock.Anything).Return(nil)
 
 	// When
-	tool, err := New("0.2.0", mockedFileDownloader)
+	tool, err := New("0.2.0", mockedFileDownloader, GithubReleaseBaseURL)
 
 	// Then
 	require.NoError(t, err)
@@ -90,7 +119,7 @@ func Test_New_Fail(t *testing.T) {
 	mockedFileDownloader.On("GetWithFallback", mock.Anything, mock.Anything, mock.Anything).Return(expectedError)
 
 	// When
-	tool, actualError := New("0.2.0", mockedFileDownloader)
+	tool, actualError := New("0.2.0", mockedFileDownloader, GithubReleaseBaseURL)
 
 	// Then
 	require.Equal(t, expectedError, actualError)
