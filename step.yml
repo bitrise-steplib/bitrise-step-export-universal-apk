@@ -30,8 +30,13 @@ host_os_tags:
   - ubuntu-16.04
 project_type_tags:
   - android
+  - cordova
+  - flutter
+  - ionic
+  - kotlin-multiplatform
+  - react-native
 type_tags:
-  - test
+  - utility
 
 is_requires_admin_user: true
 is_always_run: false
