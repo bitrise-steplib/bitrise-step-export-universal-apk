@@ -3,7 +3,7 @@ package filedownloader
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -21,7 +21,7 @@ func Test_get_Success(t *testing.T) {
 	mockedHTTPClient := givenHTTPClient(
 		http.Response{
 			StatusCode: 200,
-			Body:       ioutil.NopCloser(strings.NewReader("filecontent1")),
+			Body:       io.NopCloser(strings.NewReader("filecontent1")),
 		})
 	downloader := givenFileDownloader(mockedHTTPClient)
 
@@ -75,7 +75,7 @@ func Test_GetWithFallback_FirstSuccess(t *testing.T) {
 			url: "http://url1.com",
 			response: http.Response{
 				StatusCode: 200,
-				Body:       ioutil.NopCloser(strings.NewReader("filecontent1"))},
+				Body:       io.NopCloser(strings.NewReader("filecontent1"))},
 		},
 		{
 			url:      "http://url2.com",
@@ -105,7 +105,7 @@ func Test_GetWithFallback_SecondSuccess(t *testing.T) {
 			url: "http://url2.com",
 			response: http.Response{
 				StatusCode: 200,
-				Body:       ioutil.NopCloser(strings.NewReader("filecontent2"))},
+				Body:       io.NopCloser(strings.NewReader("filecontent2"))},
 		},
 	}
 	mockedHTTPClient := givenMultiResponseHTTPClient(mockResponses)
@@ -200,7 +200,7 @@ func assertFileNotExists(t *testing.T, path string) {
 }
 
 func assertFileContent(t *testing.T, path, expectedContent string) {
-	actualContent, err := ioutil.ReadFile(path)
+	actualContent, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatalf("Could not read file content at: %s. Error: %s", path, err)
 	}

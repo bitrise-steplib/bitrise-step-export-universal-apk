@@ -43,7 +43,7 @@ You can also run this step directly with [Bitrise CLI](https://github.com/bitris
 
 | Key | Description | Flags | Default |
 | --- | --- | --- | --- |
-| `aab_path` | The **Android App Bundle path** input field is automatically filled out by the output of the previous build Step  | required | `$BITRISE_AAB_PATH` |
+| `aab_path` | The **Android App Bundle path** input field is automatically filled out by the output of the previous build Step | required | `$BITRISE_AAB_PATH` |
 | `keystore_url` | The keystore file's URL which is generated when you upload the file to the Code Signing tab. | required, sensitive | `$BITRISEIO_ANDROID_KEYSTORE_URL` |
 | `keystore_password` | The password you added to the keystore. | required, sensitive | `$BITRISEIO_ANDROID_KEYSTORE_PASSWORD` |
 | `keystore_alias` | Identifier name you added to the keystore. | required, sensitive | `$BITRISEIO_ANDROID_KEYSTORE_ALIAS` |

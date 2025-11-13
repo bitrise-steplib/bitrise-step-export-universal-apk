@@ -202,9 +202,9 @@ func mapBuildArtifacts(pths []string) ArtifactMap {
 		}
 
 		if len(info.SplitInfo.SplitParams) == 0 {
-			if len(artifact.APK) != 0 {
-				// might -unsigned and -bitrise-signed versions both exist of the same apk
-			}
+			// if len(artifact.APK) != 0 {
+			// 	// might -unsigned and -bitrise-signed versions both exist of the same apk
+			// }
 			artifact.APK = pth
 			buildTypeArtifacts[info.ProductFlavour] = artifact
 			moduleArtifacts[info.BuildType] = buildTypeArtifacts
@@ -231,14 +231,6 @@ func mapBuildArtifacts(pths []string) ArtifactMap {
 	}
 
 	return buildArtifacts
-}
-
-// remove deletes an element of an array.
-func remove(slice []string, i uint) []string {
-	if int(i) > len(slice)-1 {
-		return slice
-	}
-	return append(slice[:i], slice[i+1:]...)
 }
 
 // SplitArtifactMeta ...
