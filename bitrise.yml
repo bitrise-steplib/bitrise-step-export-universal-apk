@@ -4,19 +4,15 @@ default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 app:
   envs:
   - SAMPLE_APP_URL: https://github.com/bitrise-io/sample-artifacts.git
-  - BITRISE_AAB_PATH: ./app-bitrise-signed.aab
+  - BITRISE_AAB_PATH: ./aab/app-release.aab
   - ORIG_BITRISE_SOURCE_DIR: $BITRISE_SOURCE_DIR
 
 workflows:
   ci:
     title: CI
     before_run:
-      - audit-this-step
+    - check
     steps:
-    - go-list:
-    - golint:
-    - errcheck:
-    - go-test:
     - change-workdir:
         title: Switch working dir to test / _tmp dir
         description: |-
@@ -30,11 +26,11 @@ workflows:
         - is_create_path: true
     - script:
         inputs:
-          - content: git clone $SAMPLE_APP_URL ./
+        - content: git clone $SAMPLE_APP_URL ./
     after_run:
-      - test-no-keystore
-      - test-keystore
-      - clear-tmp
+    - test-no-keystore
+    - test-keystore
+    - clear-tmp
 
   test-no-keystore:
     steps:
@@ -47,13 +43,13 @@ workflows:
           file if you would not specify another value.
         run_if: true
         inputs:
-          - keystore_url: ""
-          - keystore_password: ""
-          - keystore_alias: ""
-          - private_key_password: ""
+        - keystore_url: ""
+        - keystore_password: ""
+        - keystore_alias: ""
+        - private_key_password: ""
     after_run:
-      - assert-outputs
-      - clear-artifacts
+    - assert-outputs
+    - clear-artifacts
 
   test-keystore:
     steps:
@@ -61,8 +57,8 @@ workflows:
         title: Test with providing Keystore info
         run_if: true
     after_run:
-      - assert-outputs
-      - clear-artifacts
+    - assert-outputs
+    - clear-artifacts
 
   assert-outputs:
     steps:
@@ -92,11 +88,10 @@ workflows:
             rm $BITRISE_DEPLOY_DIR/*
             envman add --key BITRISE_APK_PATH --value ""
 
-  audit-this-step:
+  check:
     steps:
-    - script:
-        inputs:
-        - content: |-
-            #!/bin/bash
-            set -ex
-            stepman audit --step-yml ./step.yml
+    - git::https://github.com/bitrise-steplib/steps-check.git: { }
+
+  generate_readme:
+    steps:
+    - git::https://github.com/bitrise-steplib/steps-readme-generator.git@main: { }

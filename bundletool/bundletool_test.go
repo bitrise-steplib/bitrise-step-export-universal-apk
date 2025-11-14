@@ -4,7 +4,6 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 
 	logv2 "github.com/bitrise-io/go-utils/v2/log"
@@ -144,10 +143,4 @@ func givenKeystoreConfig() KeystoreConfig {
 		KeystorePassword:   "pass:keystorePassword",
 		SigningKeyAlias:    "signingkeyalias",
 		SigningKeyPassword: "file:/path/to/keystorepassfile"}
-}
-
-func assertFileExists(t *testing.T, path string) {
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		t.Fatalf("File should exist at: %s", path)
-	}
 }

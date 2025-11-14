@@ -25,13 +25,16 @@ description: |
 website: https://github.com/bitrise-steplib/bitrise-step-export-universal-apk
 source_code_url: https://github.com/bitrise-steplib/bitrise-step-export-universal-apk
 support_url: https://github.com/bitrise-steplib/bitrise-step-export-universal-apk/issues
-host_os_tags:
-  - osx-10.10
-  - ubuntu-16.04
+
 project_type_tags:
-  - android
+- android
+- cordova
+- flutter
+- ionic
+- kotlin-multiplatform
+- react-native
 type_tags:
-  - test
+- utility
 
 is_requires_admin_user: true
 is_always_run: false
@@ -43,52 +46,46 @@ toolkit:
     package_name: github.com/bitrise-steplib/bitrise-step-export-universal-apk
 
 inputs:
-  - aab_path: $BITRISE_AAB_PATH
-    opts:
-      title: "Android App Bundle path"
-      summary: "Android App Bundle file (`.aab`) path"
-      description: |
-        The **Android App Bundle path** input field is automatically filled out by the output of the previous build Step
-      is_expand: true
-      is_required: true
-  - keystore_url: $BITRISEIO_ANDROID_KEYSTORE_URL
-    opts:
-      title: "Keystore URL"
-      summary: "The keystore file's URL which is generated when you upload the file to the Code Signing tab."
-      description: ""
-      is_required: true
-      is_sensitive: true
-  - keystore_password: $BITRISEIO_ANDROID_KEYSTORE_PASSWORD
-    opts:
-      title: "Keystore password"
-      summary: "The password you added to the keystore."
-      description:  ""
-      is_required: true
-      is_sensitive: true
-  - keystore_alias: $BITRISEIO_ANDROID_KEYSTORE_ALIAS
-    opts:
-      title: "Keystore alias"
-      summary: "Identifier name you added to the keystore."
-      description:  ""
-      is_required: true
-      is_sensitive: true
-  - private_key_password: $BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
-    opts:
-      title: "Private key password"
-      summary: "Password you added to the private key."
-      description:
-      is_sensitive: true
-  - bundletool_version: "1.8.1"
-    opts:
-      title: "Bundletool version"
-      summary: "You can override this Bundletool version if you need a specific one."
-      description:  "If you wish to set a specific version, add it here based on [Bundletool's official release](https://github.com/google/bundletool/releases) page."
-      is_expand: true
+- aab_path: $BITRISE_AAB_PATH
+  opts:
+    title: Android App Bundle path
+    summary: Android App Bundle file (`.aab`) path
+    description: |-
+      The **Android App Bundle path** input field is automatically filled out by the output of the previous build Step
+    is_expand: true
+    is_required: true
+- keystore_url: $BITRISEIO_ANDROID_KEYSTORE_URL
+  opts:
+    title: Keystore URL
+    summary: The keystore file's URL which is generated when you upload the file to the Code Signing tab.
+    is_required: true
+    is_sensitive: true
+- keystore_password: $BITRISEIO_ANDROID_KEYSTORE_PASSWORD
+  opts:
+    title: Keystore password
+    summary: The password you added to the keystore.
+    is_required: true
+    is_sensitive: true
+- keystore_alias: $BITRISEIO_ANDROID_KEYSTORE_ALIAS
+  opts:
+    title: Keystore alias
+    summary: Identifier name you added to the keystore.
+    is_required: true
+    is_sensitive: true
+- private_key_password: $BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
+  opts:
+    title: Private key password
+    summary: Password you added to the private key.
+    is_sensitive: true
+- bundletool_version: 1.8.1
+  opts:
+    title: Bundletool version
+    summary: You can override this Bundletool version if you need a specific one.
+    description: If you wish to set a specific version, add it here based on [Bundletool's official release](https://github.com/google/bundletool/releases) page.
+    is_expand: true
 
 outputs:
-  - BITRISE_APK_PATH:
-    opts:
-      title: "The exported APK's path"
-      summary: "The APK is exported to this output Environment Variable and can be picked up by the next Step or Ship."
-      description: ""
-       
+- BITRISE_APK_PATH:
+  opts:
+    title: The exported APK's path
+    summary: The APK is exported to this output Environment Variable and can be picked up by the next Step or Ship.
