@@ -4,7 +4,7 @@ default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 app:
   envs:
   - SAMPLE_APP_URL: https://github.com/bitrise-io/sample-artifacts.git
-  - BITRISE_AAB_PATH: ./app-bitrise-signed.aab
+  - BITRISE_AAB_PATH: ./aab/app-release.aab
   - ORIG_BITRISE_SOURCE_DIR: $BITRISE_SOURCE_DIR
 
 workflows:
