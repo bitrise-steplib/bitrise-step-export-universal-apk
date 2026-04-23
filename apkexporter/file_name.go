@@ -7,7 +7,7 @@ import (
 	"unicode"
 
 	"github.com/bitrise-io/go-utils/log"
-	"github.com/bitrise-io/go-utils/pretty"
+	"github.com/bitrise-io/go-utils/v2/pretty"
 	"github.com/bitrise-io/go-utils/sliceutil"
 )
 
